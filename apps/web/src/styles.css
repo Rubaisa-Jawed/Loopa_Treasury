@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+:root {
+  color-scheme: light dark;
+  --app-bg: var(--tg-theme-bg-color, #f7f8fb);
+  --app-text: var(--tg-theme-text-color, #16202a);
+  --app-muted: var(--tg-theme-hint-color, #6c7680);
+  --app-panel: var(--tg-theme-secondary-bg-color, #ffffff);
+  --app-button: var(--tg-theme-button-color, #1f8f72);
+  --app-button-text: var(--tg-theme-button-text-color, #ffffff);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.panel {
+  background: var(--app-panel);
+  border: 1px solid color-mix(in srgb, var(--app-muted) 18%, transparent);
+  border-radius: 8px;
+}
+
+.tg-button {
+  background: var(--app-button);
+  color: var(--app-button-text);
+}
