@@ -1,24 +1,24 @@
-# Pilot Social Launch Kit
+# LoopTreasury Social Launch Kit
 
-This document gives you the copy, positioning, account setup, and launch content for Pilot before the Colosseum Frontier Hackathon submission.
+This document gives you the copy, positioning, account setup, and launch content for LoopTreasury before the Colosseum Frontier Hackathon submission.
 
 ## 1. Core Brand
 
-**Project name:** Pilot
+**Project name:** LoopTreasury
 
 **Tagline:** Your AI co-pilot for Solana DeFi, in Telegram.
 
-**One-liner:** Pilot is an AI-powered Telegram bot that helps Solana users understand, manage, and grow their DeFi portfolio through natural conversation.
+**One-liner:** LoopTreasury is an AI-powered Telegram bot that helps Solana users understand, manage, and grow their DeFi portfolio through natural conversation.
 
-**Short description:** Pilot lets users chat with an AI DeFi copilot inside Telegram to view portfolios, compare yield, prepare swaps, set alerts, and safely confirm on-chain actions on Solana.
+**Short description:** LoopTreasury lets users chat with an AI DeFi copilot inside Telegram to view portfolios, compare yield, prepare swaps, set alerts, and safely confirm on-chain actions on Solana.
 
-**Long description:** Pilot turns Solana DeFi into a simple conversation. Instead of jumping between wallets, dashboards, DEXs, lending protocols, and yield pages, users can ask Pilot what to do in plain English. Pilot reads their wallet, checks live protocol data, finds yield opportunities, prepares transactions, and never executes anything without explicit user confirmation. It also demonstrates the agentic economy by using x402-style micropayments so the agent can pay for premium data when it improves a recommendation.
+**Long description:** LoopTreasury turns Solana DeFi into a simple conversation. Instead of jumping between wallets, dashboards, DEXs, lending protocols, and yield pages, users can ask LoopTreasury what to do in plain English. LoopTreasury reads their wallet, checks live protocol data, finds yield opportunities, prepares transactions, and never executes anything without explicit user confirmation. It also demonstrates the agentic economy by using x402-style micropayments so the agent can pay for premium data when it improves a recommendation.
 
 ## 2. Positioning
 
-**Main idea:** DeFi is powerful, but the interface is still too technical. Pilot brings Solana DeFi to Telegram, where normal users already live.
+**Main idea:** DeFi is powerful, but the interface is still too technical. LoopTreasury brings Solana DeFi to Telegram, where normal users already live.
 
-**What Pilot does for users:**
+**What LoopTreasury does for users:**
 
 - Shows their Solana portfolio in chat and in a Telegram Mini App
 - Finds yield across Kamino, Raydium, and Marinade
@@ -28,7 +28,7 @@ This document gives you the copy, positioning, account setup, and launch content
 - Uses x402-style micropayments for premium market data
 - Helps users act without forcing them to understand every DeFi protocol page
 
-**Why this matters:** Most people do not want to become DeFi experts before earning yield or managing a wallet. Pilot makes Solana DeFi feel like messaging a smart financial assistant.
+**Why this matters:** Most people do not want to become DeFi experts before earning yield or managing a wallet. LoopTreasury makes Solana DeFi feel like messaging a smart financial assistant.
 
 **What makes it different:**
 
@@ -62,12 +62,13 @@ Check availability before claiming.
 
 **Best options:**
 
-- `@PilotDeFi`
-- `@UsePilot`
-- `@UsePilotAI`
-- `@PilotOnSolana`
-- `@PilotSolana`
-- `@PilotAgent`
+- `@LoopTreasury`
+- `@LoopTreasuryDeFi`
+- `@UseLoopTreasury`
+- `@UseLoopTreasuryAI`
+- `@LoopTreasuryOnSolana`
+- `@LoopTreasurySolana`
+- `@LoopTreasuryAgent`
 
 **Avoid:**
 
@@ -75,7 +76,7 @@ Check availability before claiming.
 - Handles that imply custody, guaranteed profit, or investment advice
 - Handles that are too long for people to remember
 
-**Recommended final choice:** `@PilotDeFi` if available. It is short, clear, and tells people the category immediately.
+**Recommended final choice:** `@LoopTreasury` if available. If not, use `@LoopTreasuryDeFi`.
 
 ## 5. Account Setup
 
@@ -83,15 +84,15 @@ Check availability before claiming.
 
 **Display name options:**
 
-- Pilot
-- Pilot DeFi
-- Pilot on Solana
+- LoopTreasury
+- LoopTreasury DeFi
+- LoopTreasury on Solana
 
 **Bio options:**
 
 1. AI co-pilot for Solana DeFi. Manage your portfolio, swaps, yield, and alerts from Telegram.
 2. Your AI DeFi copilot in Telegram. Built on Solana for portfolio insights, yield discovery, swaps, and alerts.
-3. Solana DeFi, simplified into a chat. Ask Pilot to view, compare, swap, monitor, and earn.
+3. Solana DeFi, simplified into a chat. Ask LoopTreasury to view, compare, swap, monitor, and earn.
 
 **Location:** Solana
 
@@ -105,23 +106,23 @@ Check availability before claiming.
 
 Create:
 
-- Bot: `@PilotDeFiBot` or closest available
-- Announcement channel: `Pilot DeFi`
-- Community group: `Pilot DeFi Community`
+- Bot: `@LoopaTreasuryBot` already created
+- Announcement channel: `LoopTreasury DeFi`
+- Community group: `LoopTreasury DeFi Community`
 
 **Telegram channel description:**
 
-Pilot is an AI-powered DeFi copilot for Solana. Chat with your portfolio, find yield, prepare swaps, and monitor positions from Telegram.
+LoopTreasury is an AI-powered DeFi copilot for Solana. Chat with your portfolio, find yield, prepare swaps, and monitor positions from Telegram.
 
 **Pinned Telegram channel message:**
 
-Welcome to Pilot.
+Welcome to LoopTreasury.
 
-Pilot is an AI DeFi copilot for Solana that lives inside Telegram. Ask it what your portfolio is worth, where to find yield, how to swap tokens, or when to alert you about market moves.
+LoopTreasury is an AI DeFi copilot for Solana that lives inside Telegram. Ask it what your portfolio is worth, where to find yield, how to swap tokens, or when to alert you about market moves.
 
 Transactions always require explicit confirmation before anything goes on-chain.
 
-Bot: `[insert bot link]`
+Bot: `https://t.me/LoopaTreasuryBot`
 Demo: `[insert video link]`
 Colosseum: `[insert submission link]`
 
@@ -131,13 +132,13 @@ Use LinkedIn only for credibility and investor-facing updates.
 
 **Company tagline:** AI-powered DeFi copilot for Solana users.
 
-**Description:** Pilot helps Solana users manage DeFi from Telegram using natural language, AI tool-calling, protocol integrations, and non-custodial transaction confirmation.
+**Description:** LoopTreasury helps Solana users manage DeFi from Telegram using natural language, AI tool-calling, protocol integrations, and non-custodial transaction confirmation.
 
 ### Website / Landing Page
 
 First page should say exactly what the product does:
 
-**Headline:** Pilot
+**Headline:** LoopTreasury
 
 **Subheadline:** Your AI co-pilot for Solana DeFi, in Telegram.
 
@@ -148,7 +149,7 @@ First page should say exactly what the product does:
 ## 6. Pinned X Post
 
 ```text
-Meet Pilot.
+Meet LoopTreasury.
 
 Your AI co-pilot for Solana DeFi, inside Telegram.
 
@@ -167,7 +168,7 @@ Built for Colosseum Frontier.
 ## 7. Launch Thread
 
 ```text
-1/ We built Pilot: an AI-powered DeFi copilot for Solana that lives inside Telegram.
+1/ We built LoopTreasury: an AI-powered DeFi copilot for Solana that lives inside Telegram.
 
 Most DeFi users do not want 12 tabs, 4 dashboards, and protocol docs just to manage a wallet.
 
@@ -175,7 +176,7 @@ They want to ask a question and get a safe, useful answer.
 ```
 
 ```text
-2/ Pilot lets users chat with their portfolio.
+2/ LoopTreasury lets users chat with their portfolio.
 
 "What is my wallet worth?"
 "Find yield for 500 USDC."
@@ -186,7 +187,7 @@ The interface is Telegram. The execution layer is Solana.
 ```
 
 ```text
-3/ Under the hood, Pilot combines:
+3/ Under the hood, LoopTreasury combines:
 
 - Telegram bot UX
 - Telegram Mini App dashboard
@@ -201,13 +202,13 @@ The interface is Telegram. The execution layer is Solana.
 ```text
 4/ The most important rule:
 
-Pilot never executes a transaction from an AI response alone.
+LoopTreasury never executes a transaction from an AI response alone.
 
 It prepares the action, shows the expected output, price impact, fees, and route, then waits for the user to tap Confirm.
 ```
 
 ```text
-5/ Pilot also explores the agentic economy.
+5/ LoopTreasury also explores the agentic economy.
 
 When a user asks for deeper market analysis, the agent can use an x402-style payment flow to pay for premium data.
 
@@ -219,7 +220,7 @@ That means the assistant can finance useful information on demand.
 
 They will start in chat.
 
-Pilot makes Solana DeFi feel less like operating machinery and more like talking to a capable copilot.
+LoopTreasury makes Solana DeFi feel less like operating machinery and more like talking to a capable copilot.
 ```
 
 ```text
@@ -237,7 +238,7 @@ DeFi has great infrastructure.
 
 The problem is the interface.
 
-Pilot puts a Solana DeFi agent inside Telegram so users can ask, compare, confirm, and act without protocol hopping.
+LoopTreasury puts a Solana DeFi agent inside Telegram so users can ask, compare, confirm, and act without protocol hopping.
 ```
 
 ```text
@@ -245,7 +246,7 @@ Pilot puts a Solana DeFi agent inside Telegram so users can ask, compare, confir
 
 That should be a chat message, not a research project.
 
-That is what we are building with Pilot.
+That is what we are building with LoopTreasury.
 ```
 
 ```text
@@ -253,11 +254,11 @@ AI agents should not just answer questions.
 
 They should check data, compare options, prepare actions, and wait for explicit user approval.
 
-Pilot is our take on that for Solana DeFi.
+LoopTreasury is our take on that for Solana DeFi.
 ```
 
 ```text
-Pilot rule #1:
+LoopTreasury rule #1:
 
 No transaction goes on-chain without a clear confirmation step.
 
@@ -271,7 +272,7 @@ Telegram is underrated as a crypto UX layer.
 
 Wallets, dashboards, alerts, and AI assistance can all live inside one conversation.
 
-Pilot is built around that idea.
+LoopTreasury is built around that idea.
 ```
 
 ## 9. Demo Video Script
@@ -279,23 +280,23 @@ Pilot is built around that idea.
 **Length:** 60 to 90 seconds
 
 ```text
-Hi, this is Pilot, an AI co-pilot for Solana DeFi inside Telegram.
+Hi, this is LoopTreasury, an AI co-pilot for Solana DeFi inside Telegram.
 
 Most DeFi users have to jump between wallets, dashboards, DEXs, lending pages, and price tools just to make one decision.
 
-With Pilot, the user can simply ask: "What is my portfolio worth?"
+With LoopTreasury, the user can simply ask: "What is my portfolio worth?"
 
-Pilot reads the wallet, fetches balances, and shows the portfolio in chat and in a Telegram Mini App dashboard.
+LoopTreasury reads the wallet, fetches balances, and shows the portfolio in chat and in a Telegram Mini App dashboard.
 
 Then the user can ask: "Find the best yield for 500 USDC."
 
-Pilot compares opportunities across Solana DeFi protocols like Kamino, Raydium, and Marinade, then explains the best options based on the user's risk appetite.
+LoopTreasury compares opportunities across Solana DeFi protocols like Kamino, Raydium, and Marinade, then explains the best options based on the user's risk appetite.
 
-For swaps, Pilot prepares a Jupiter quote, shows expected output, fees, and price impact, and waits for the user to tap Confirm.
+For swaps, LoopTreasury prepares a Jupiter quote, shows expected output, fees, and price impact, and waits for the user to tap Confirm.
 
 Nothing goes on-chain without explicit approval.
 
-Pilot also demonstrates agentic payments with x402-style premium data access, where the agent can pay for useful market data when needed.
+LoopTreasury also demonstrates agentic payments with x402-style premium data access, where the agent can pay for useful market data when needed.
 
 We are making Solana DeFi feel like a conversation.
 ```
@@ -304,7 +305,7 @@ We are making Solana DeFi feel like a conversation.
 
 **Project summary:**
 
-Pilot is an AI-powered DeFi copilot that lives inside Telegram. It helps Solana users manage portfolios, discover yield, prepare swaps, set alerts, and understand market data through natural language.
+LoopTreasury is an AI-powered DeFi copilot that lives inside Telegram. It helps Solana users manage portfolios, discover yield, prepare swaps, set alerts, and understand market data through natural language.
 
 **Problem:**
 
@@ -312,7 +313,7 @@ Solana DeFi has powerful protocols, but the user experience is fragmented and in
 
 **Solution:**
 
-Pilot gives users a conversational interface where an AI agent can read wallet data, reason over protocol opportunities, prepare safe actions, and ask for confirmation before execution.
+LoopTreasury gives users a conversational interface where an AI agent can read wallet data, reason over protocol opportunities, prepare safe actions, and ask for confirmation before execution.
 
 **Why now:**
 
@@ -331,7 +332,7 @@ Avoid:
 - "Autonomous trading bot"
 - "We manage your money for you"
 - "Give us your private key"
-- "Pilot will always find the best trade"
+- "LoopTreasury will always find the best trade"
 
 Use instead:
 
@@ -344,7 +345,7 @@ Use instead:
 
 ## 12. Submission Week Content Plan
 
-**Day 1:** Announce Pilot and the core idea.
+**Day 1:** Announce LoopTreasury and the core idea.
 
 **Day 2:** Show the Telegram bot receiving a portfolio question.
 
@@ -367,7 +368,7 @@ Good:
 - "We are building this because DeFi UX is still too hard."
 - "The agent prepares actions, but the user stays in control."
 - "Telegram is the distribution layer. Solana is the execution layer."
-- "Pilot is not trying to replace wallets. It is the conversational layer above them."
+- "LoopTreasury is not trying to replace wallets. It is the conversational layer above them."
 
 Avoid sounding like:
 
@@ -394,9 +395,9 @@ Avoid sounding like:
 ## 15. Best First Post
 
 ```text
-We are building Pilot for Colosseum Frontier.
+We are building LoopTreasury for Colosseum Frontier.
 
-Pilot is an AI co-pilot for Solana DeFi that lives inside Telegram.
+LoopTreasury is an AI co-pilot for Solana DeFi that lives inside Telegram.
 
 Users can ask about their portfolio, find yield, prepare swaps, set alerts, and confirm transactions without leaving chat.
 

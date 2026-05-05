@@ -22,6 +22,6 @@ export async function authMiddleware(ctx: PilotContext, next: NextFunction): Pro
     await next()
   } catch (error) {
     logger.error({ error, telegramId: ctx.from?.id }, 'Auth middleware failed')
-    await ctx.reply('I had trouble loading your Pilot profile. Please try again in a moment.')
+    await ctx.reply('I had trouble loading your LoopTreasury profile. Please try again in a moment.')
   }
 }

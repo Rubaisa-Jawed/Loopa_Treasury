@@ -10,13 +10,13 @@ import { logger } from '../../utils/logger.js'
 export async function startCommand(ctx: PilotContext): Promise<void> {
   try {
     if (!ctx.from) {
-      await replyMarkdown(ctx, 'Welcome to Pilot. Open this chat from your Telegram account to get started.')
+      await replyMarkdown(ctx, 'Welcome to LoopTreasury. Open this chat from your Telegram account to get started.')
       return
     }
 
     const user = (await getUserByTelegramId(ctx.from.id)) ?? (await createUser(ctx.from.id, ctx.from.username))
     if (!user) {
-      await replyMarkdown(ctx, 'I could not create your Pilot profile yet. Please try again in a moment.')
+      await replyMarkdown(ctx, 'I could not create your LoopTreasury profile yet. Please try again in a moment.')
       return
     }
 
@@ -27,7 +27,7 @@ export async function startCommand(ctx: PilotContext): Promise<void> {
     await replyMarkdown(
       ctx,
       [
-        '*Welcome to Pilot*',
+        '*Welcome to LoopTreasury*',
         '',
         'Your AI co-pilot for Solana DeFi, right here in Telegram.',
         '',

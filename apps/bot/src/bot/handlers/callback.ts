@@ -51,7 +51,7 @@ export async function callbackHandler(ctx: PilotContext): Promise<void> {
       return
     }
 
-    await answerCallback(ctx, 'Pilot does not recognize that action yet.')
+    await answerCallback(ctx, 'LoopTreasury does not recognize that action yet.')
   } catch (error) {
     logger.error({ error, telegramId: ctx.from?.id }, 'Callback handler failed')
     await answerCallback(ctx, 'Something went wrong.')
@@ -63,7 +63,7 @@ async function handleConnectWallet(ctx: PilotContext): Promise<void> {
   try {
     ctx.session.awaitingWalletAddress = true
     const keyboard = new InlineKeyboard()
-      .webApp('Open Pilot Dashboard', env.TELEGRAM_MINI_APP_URL)
+      .webApp('Open LoopTreasury Dashboard', env.TELEGRAM_MINI_APP_URL)
       .row()
       .url('Open Phantom', 'https://phantom.app/ul/browse/https%3A%2F%2Fpilot.local')
 
@@ -73,7 +73,7 @@ async function handleConnectWallet(ctx: PilotContext): Promise<void> {
       [
         '*Connect your wallet*',
         '',
-        'For this bot MVP, paste your public Solana wallet address here. Pilot will use it for read-only portfolio checks.',
+        'For this bot MVP, paste your public Solana wallet address here. LoopTreasury will use it for read-only portfolio checks.',
         '',
         'Transactions still require a separate confirm tap and Phantom MCP signing. Never paste a seed phrase or private key.'
       ].join('\n'),
@@ -91,14 +91,14 @@ async function handleHowItWorks(ctx: PilotContext): Promise<void> {
     await replyMarkdown(
       ctx,
       [
-        '*How Pilot works*',
+        '*How LoopTreasury works*',
         '',
         '1. You connect a Solana wallet for read-only portfolio data.',
         '2. You ask for swaps, yield, alerts, or market context in plain English.',
-        '3. Pilot fetches live protocol data and prepares actions.',
+        '3. LoopTreasury fetches live protocol data and prepares actions.',
         '4. Anything on-chain waits for your explicit Confirm button.',
         '',
-        'Pilot is non-custodial: it never asks for private keys.'
+        'LoopTreasury is non-custodial: it never asks for private keys.'
       ].join('\n')
     )
   } catch (error) {
@@ -109,7 +109,7 @@ async function handleHowItWorks(ctx: PilotContext): Promise<void> {
 async function handleRiskSelection(ctx: PilotContext, data: string): Promise<void> {
   try {
     if (!ctx.from) {
-      await answerCallback(ctx, 'Open Pilot from your Telegram account.')
+      await answerCallback(ctx, 'Open LoopTreasury from your Telegram account.')
       return
     }
 
@@ -138,7 +138,7 @@ async function handleRiskSelection(ctx: PilotContext, data: string): Promise<voi
 async function handleSwapConfirmation(ctx: PilotContext, swapId: string): Promise<void> {
   try {
     if (!ctx.from) {
-      await answerCallback(ctx, 'Open Pilot from Telegram to confirm.')
+      await answerCallback(ctx, 'Open LoopTreasury from Telegram to confirm.')
       return
     }
 

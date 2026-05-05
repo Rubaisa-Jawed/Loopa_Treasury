@@ -40,7 +40,7 @@ export function formatPortfolioMessage(portfolio: Portfolio): string {
   const positions = portfolio.defiPositions.slice(0, 5).map(formatPositionLine)
 
   return [
-    '*Pilot Portfolio*',
+    '*LoopTreasury Portfolio*',
     '',
     `Total value: *${formatUsd(portfolio.totalUsdValue)}*`,
     `SOL: ${formatTokenAmount(portfolio.solBalance, 'SOL')} (${formatUsd(portfolio.solUsdValue)})`,

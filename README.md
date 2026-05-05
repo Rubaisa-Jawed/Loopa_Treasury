@@ -1,8 +1,8 @@
-# Pilot
+# LoopTreasury
 
-Pilot is an AI-powered DeFi copilot for Solana that lives inside Telegram. Users can ask natural-language questions like "Find the best yield for my 500 USDC" or "Swap 1 SOL to USDC", and Pilot reads their portfolio, compares DeFi opportunities, prepares transactions, and waits for explicit confirmation before anything goes on-chain.
+LoopTreasury is an AI-powered DeFi copilot for Solana that lives inside Telegram. Users can ask natural-language questions like "Find the best yield for my 500 USDC" or "Swap 1 SOL to USDC", and LoopTreasury reads their portfolio, compares DeFi opportunities, prepares transactions, and waits for explicit confirmation before anything goes on-chain.
 
-Built for the Colosseum Frontier Hackathon 2026, Pilot is shaped like a real startup product: a Telegram bot backend, ReAct-style AI agent, Solana protocol integrations, Redis-backed confirmation flows, background monitoring, and a Telegram Mini App portfolio dashboard.
+Built for the Colosseum Frontier Hackathon 2026, LoopTreasury is shaped like a real startup product: a Telegram bot backend, ReAct-style AI agent, Solana protocol integrations, Redis-backed confirmation flows, background monitoring, and a Telegram Mini App portfolio dashboard.
 
 ## Architecture
 
@@ -118,7 +118,7 @@ The Mini App runs at `http://localhost:5173`. The bot uses long polling in devel
 
 ## Bot Usage
 
-- `/start` creates a Pilot profile and starts wallet onboarding
+- `/start` creates a LoopTreasury profile and starts wallet onboarding
 - `/portfolio` fetches wallet balances and active DeFi positions
 - `/settings` updates risk appetite and notification preferences
 - `/help` shows examples
@@ -135,11 +135,11 @@ What is SOL sentiment right now?
 
 ## Transaction Safety
 
-Pilot never executes a transaction from the AI tool call. Swap flow is:
+LoopTreasury never executes a transaction from the AI tool call. Swap flow is:
 
 1. The agent calls `prepareSwap`.
 2. Jupiter returns a quote.
-3. Pilot stores `swap:{uuid}` in Redis for 5 minutes.
+3. LoopTreasury stores `swap:{uuid}` in Redis for 5 minutes.
 4. The bot sends Confirm and Cancel buttons.
 5. Only the Confirm callback calls `executeSwap`.
 6. Phantom MCP signs and sends the built Jupiter transaction.
@@ -168,7 +168,7 @@ If Phantom MCP is not configured, execution fails safely after confirmation and 
 
 ## API Notes
 
-Jupiter, Raydium, Kamino, and x402 APIs evolve quickly. Pilot keeps base URLs configurable where possible:
+Jupiter, Raydium, Kamino, and x402 APIs evolve quickly. LoopTreasury keeps base URLs configurable where possible:
 
 - Jupiter docs: https://dev.jup.ag/docs
 - Raydium APIs: https://docs.raydium.io/raydium/build/resources/apis
@@ -178,7 +178,7 @@ Jupiter, Raydium, Kamino, and x402 APIs evolve quickly. Pilot keeps base URLs co
 
 ## Team
 
-Pilot is built for a small, fast-moving hackathon team focused on consumer Solana UX, agentic finance, and Telegram distribution.
+LoopTreasury is built for a small, fast-moving hackathon team focused on consumer Solana UX, agentic finance, and Telegram distribution.
 
 ## License
 

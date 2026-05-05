@@ -40,7 +40,7 @@ export async function payForDataX402(params: X402Params): Promise<X402Result> {
     const initial = await fetch(env.X402_DATA_ENDPOINT, {
       headers: {
         Accept: 'application/json',
-        'X-Pilot-Data-Type': params.dataType
+        'X-LoopTreasury-Data-Type': params.dataType
       }
     })
 
@@ -67,7 +67,7 @@ export async function payForDataX402(params: X402Params): Promise<X402Result> {
     const paidResponse = await fetchJson<Record<string, unknown>>(env.X402_DATA_ENDPOINT, {
       headers: {
         Accept: 'application/json',
-        'X-Pilot-Data-Type': params.dataType,
+        'X-LoopTreasury-Data-Type': params.dataType,
         'PAYMENT-SIGNATURE': Buffer.from(JSON.stringify(paymentPayload)).toString('base64')
       }
     })

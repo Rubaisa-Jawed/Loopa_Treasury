@@ -39,9 +39,9 @@ bot.catch((error) => {
 async function main(): Promise<void> {
   try {
     await bot.api.setMyCommands([
-      { command: 'start', description: 'Start Pilot onboarding' },
+      { command: 'start', description: 'Start LoopTreasury onboarding' },
       { command: 'portfolio', description: 'Show your Solana portfolio' },
-      { command: 'settings', description: 'Update Pilot preferences' },
+      { command: 'settings', description: 'Update LoopTreasury preferences' },
       { command: 'help', description: 'Show examples and commands' }
     ])
 
@@ -57,24 +57,24 @@ async function main(): Promise<void> {
       server = createServer(callback)
       const port = Number(process.env.PORT ?? 3000)
       server.listen(port, () => {
-        logger.info({ port }, 'Pilot bot listening for Telegram webhooks')
+        logger.info({ port }, 'LoopTreasury bot listening for Telegram webhooks')
       })
       return
     }
 
-    logger.info('Pilot bot starting in long polling mode')
+    logger.info('LoopTreasury bot starting in long polling mode')
     await bot.start({
       allowed_updates: ['message', 'callback_query']
     })
   } catch (error) {
-    logger.error({ error }, 'Pilot startup failed')
+    logger.error({ error }, 'LoopTreasury startup failed')
     await shutdown('startup_error')
   }
 }
 
 async function shutdown(signal: string): Promise<void> {
   try {
-    logger.info({ signal }, 'Shutting down Pilot bot')
+    logger.info({ signal }, 'Shutting down LoopTreasury bot')
     bot.stop()
 
     await Promise.all(workers.map((worker) => worker.close()))

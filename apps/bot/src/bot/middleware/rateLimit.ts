@@ -20,7 +20,7 @@ export function rateLimitMiddleware(limit: number, windowSeconds: number) {
       }
 
       if (count > limit) {
-        await ctx.reply('Pilot is taking a short breather for this chat. You can send more messages in a few minutes.')
+        await ctx.reply('LoopTreasury is taking a short breather for this chat. You can send more messages in a few minutes.')
         return
       }
 

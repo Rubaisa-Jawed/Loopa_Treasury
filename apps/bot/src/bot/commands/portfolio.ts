@@ -10,7 +10,7 @@ import { logger } from '../../utils/logger.js'
 export async function portfolioCommand(ctx: PilotContext): Promise<void> {
   try {
     if (!ctx.from) {
-      await replyMarkdown(ctx, 'Open Pilot from Telegram to view a portfolio.')
+      await replyMarkdown(ctx, 'Open LoopTreasury from Telegram to view a portfolio.')
       return
     }
 

@@ -19,7 +19,7 @@ export async function messageHandler(ctx: PilotContext): Promise<void> {
 
     const user = await getUserByTelegramId(ctx.from.id)
     if (!user) {
-      await replyMarkdown(ctx, 'Please use /start first so I can create your Pilot profile.')
+      await replyMarkdown(ctx, 'Please use /start first so I can create your LoopTreasury profile.')
       return
     }
 
@@ -70,7 +70,7 @@ export async function webAppDataHandler(ctx: PilotContext): Promise<void> {
     if (parsed.type === 'wallet_connected') {
       const user = await getUserByTelegramId(ctx.from.id)
       if (!user) {
-        await replyMarkdown(ctx, 'Use /start first so I can create your Pilot profile.')
+        await replyMarkdown(ctx, 'Use /start first so I can create your LoopTreasury profile.')
         return
       }
 

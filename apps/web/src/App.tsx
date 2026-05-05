@@ -30,7 +30,7 @@ export default function App() {
       <header className="sticky top-0 z-20 border-b border-black/10 bg-[var(--app-bg)]/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div>
-            <div className="text-xl font-semibold">Pilot</div>
+            <div className="text-xl font-semibold">LoopTreasury</div>
             <div className="text-xs text-[var(--app-muted)]">Solana DeFi copilot</div>
           </div>
           <div className="flex min-w-0 items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-xs text-[var(--app-muted)]">

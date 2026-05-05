@@ -7,7 +7,7 @@ export async function helpCommand(ctx: PilotContext): Promise<void> {
     await replyMarkdown(
       ctx,
       [
-        '*What Pilot can do*',
+        '*What LoopTreasury can do*',
         '',
         '- View wallet balances and DeFi positions',
         '- Compare yield across Kamino, Raydium, and Marinade',

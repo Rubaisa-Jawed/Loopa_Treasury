@@ -7,13 +7,13 @@ import { logger } from '../../utils/logger.js'
 export async function settingsCommand(ctx: PilotContext): Promise<void> {
   try {
     if (!ctx.from) {
-      await replyMarkdown(ctx, 'Open Pilot from Telegram to update settings.')
+      await replyMarkdown(ctx, 'Open LoopTreasury from Telegram to update settings.')
       return
     }
 
     const user = await getUserByTelegramId(ctx.from.id)
     if (!user) {
-      await replyMarkdown(ctx, 'Use /start first so I can create your Pilot profile.')
+      await replyMarkdown(ctx, 'Use /start first so I can create your LoopTreasury profile.')
       return
     }
 
@@ -31,7 +31,7 @@ export async function settingsCommand(ctx: PilotContext): Promise<void> {
     await replyMarkdown(
       ctx,
       [
-        '*Pilot Settings*',
+        '*LoopTreasury Settings*',
         '',
         `Risk appetite: *${user.riskAppetite}*`,
         `Monitoring frequency: *${user.monitoringFrequency}*`,
