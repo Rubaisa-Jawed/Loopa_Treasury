@@ -35,6 +35,9 @@ export default function Swap() {
       </header>
 
       <section className="panel space-y-4 p-4">
+        <div className="rounded-lg border border-cyan-700/15 bg-cyan-700/5 p-3 text-sm text-cyan-900">
+          Quotes are prepared in Telegram with route, fee, and price impact. Execution still requires a confirm tap.
+        </div>
         <TokenAmount label="From" token={fromToken} onTokenChange={setFromToken} amount={amount} onAmountChange={setAmount} />
 
         <button

@@ -1,5 +1,10 @@
-import 'dotenv/config'
+import { existsSync } from 'node:fs'
+import { dirname, join, parse } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { config } from 'dotenv'
 import { z } from 'zod'
+
+loadDotenv()
 
 const optionalUrl = z.string().url().optional().or(z.literal(''))
 
@@ -10,6 +15,7 @@ const envSchema = z.object({
   TELEGRAM_WEBHOOK_SECRET: z.string().optional().or(z.literal('')),
   TELEGRAM_MINI_APP_URL: optionalUrl.default('http://localhost:5173'),
   ANTHROPIC_API_KEY: z.string().min(1, 'ANTHROPIC_API_KEY is required'),
+  ANTHROPIC_MODEL: z.string().min(1).default('claude-sonnet-4-6'),
   HELIUS_API_KEY: z.string().min(1, 'HELIUS_API_KEY is required'),
   SOLANA_RPC_URL: z.string().url().optional().or(z.literal('')),
   SOLANA_NETWORK: z.enum(['mainnet-beta', 'devnet', 'testnet']).default('mainnet-beta'),
@@ -39,3 +45,26 @@ export function loadEnv(): Env {
 }
 
 export const env = loadEnv()
+
+function loadDotenv(): void {
+  const seen = new Set<string>()
+  for (const start of [process.cwd(), dirname(fileURLToPath(import.meta.url))]) {
+    let current = start
+    const root = parse(current).root
+
+    while (!seen.has(current)) {
+      seen.add(current)
+      const candidate = join(current, '.env')
+      if (existsSync(candidate)) {
+        config({ path: candidate, override: false })
+        return
+      }
+
+      if (current === root) {
+        break
+      }
+
+      current = dirname(current)
+    }
+  }
+}

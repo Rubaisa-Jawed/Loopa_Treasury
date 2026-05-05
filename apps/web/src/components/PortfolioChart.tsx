@@ -1,7 +1,7 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import type { Portfolio } from '@pilot/shared'
 
-const colors = ['#1f8f72', '#0f8cbe', '#e0a21a', '#d95670', '#52616f']
+const colors = ['#147d64', '#1d73a6', '#c98a18', '#be4860', '#536171']
 
 interface PortfolioChartProps {
   portfolio: Portfolio

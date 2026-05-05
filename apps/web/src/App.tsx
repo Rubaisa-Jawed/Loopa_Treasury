@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BarChart3, Coins, Repeat2, Settings, Wallet } from 'lucide-react'
+import { BarChart3, Coins, Repeat2, Settings, ShieldCheck, Wallet } from 'lucide-react'
 import Dashboard from './pages/Dashboard.js'
 import Positions from './pages/Positions.js'
 import Swap from './pages/Swap.js'
@@ -29,11 +29,19 @@ export default function App() {
     <div className="min-h-screen pb-24">
       <header className="sticky top-0 z-20 border-b border-black/10 bg-[var(--app-bg)]/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
-          <div>
-            <div className="text-xl font-semibold">LoopTreasury</div>
-            <div className="text-xs text-[var(--app-muted)]">Solana DeFi copilot</div>
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#147d64] text-sm font-bold text-white">
+              LT
+            </div>
+            <div className="min-w-0">
+              <div className="truncate text-xl font-semibold">LoopTreasury</div>
+              <div className="flex items-center gap-1 text-xs text-[var(--app-muted)]">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                <span>Non-custodial Solana treasury agent</span>
+              </div>
+            </div>
           </div>
-          <div className="flex min-w-0 items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-xs text-[var(--app-muted)]">
+          <div className="hidden min-w-0 items-center gap-2 rounded-full border border-black/10 bg-white/60 px-3 py-2 text-xs text-[var(--app-muted)] sm:flex">
             <Wallet className="h-4 w-4 shrink-0" />
             <span className="truncate">{walletAddress || 'Wallet not connected'}</span>
           </div>

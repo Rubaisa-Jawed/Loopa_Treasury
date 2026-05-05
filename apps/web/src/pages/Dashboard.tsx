@@ -1,4 +1,4 @@
-import { ArrowUpRight, Search, Sprout, Repeat2 } from 'lucide-react'
+import { ArrowUpRight, BellRing, Search, ShieldCheck, Sprout, Repeat2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import PortfolioChart from '../components/PortfolioChart.js'
@@ -23,21 +23,30 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4">
-      <section className="panel p-5">
+      <section className="panel metric-band overflow-hidden p-5">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-sm text-[var(--app-muted)]">Total value</div>
-            <h1 className="mt-1 text-4xl font-semibold">{formatUsd(portfolio.totalUsdValue)}</h1>
-            <div className="mt-2 flex items-center gap-1 text-sm text-emerald-700">
+            <div className="flex items-center gap-2 text-sm text-[var(--app-muted)]">
+              <ShieldCheck className="h-4 w-4 text-emerald-700" />
+              <span>Total treasury value</span>
+            </div>
+            <h1 className="mono-tabular mt-2 text-4xl font-semibold tracking-normal">{formatUsd(portfolio.totalUsdValue)}</h1>
+            <div className="mt-3 flex items-center gap-1 text-sm font-medium text-emerald-700">
               <ArrowUpRight className="h-4 w-4" />
               <span>+5.6% this week</span>
             </div>
           </div>
-          <div className="rounded-lg bg-amber-500/15 px-3 py-2 text-right text-sm text-amber-700">
-            <div className="font-semibold">{portfolio.defiPositions.length}</div>
-            <div>positions</div>
+          <div className="rounded-lg border border-black/10 bg-white/70 px-3 py-2 text-right text-sm text-slate-700">
+            <div className="mono-tabular font-semibold">{portfolio.defiPositions.length}</div>
+            <div className="text-[var(--app-muted)]">positions</div>
           </div>
         </div>
+      </section>
+
+      <section className="grid grid-cols-3 gap-2">
+        <MiniMetric label="Liquid" value={formatUsd(portfolio.tokens.reduce((sum, token) => sum + token.usdValue, 0))} />
+        <MiniMetric label="DeFi" value={formatUsd(portfolio.defiPositions.reduce((sum, item) => sum + item.currentValue, 0))} />
+        <MiniMetric label="Alerts" value="Ready" />
       </section>
 
       <div className="grid gap-4 md:grid-cols-[1fr_1fr]">
@@ -62,6 +71,16 @@ export default function Dashboard() {
         <ActionButton label="Swap" icon={<Repeat2 className="h-5 w-5" />} onClick={() => setActiveTab('swap')} />
         <ActionButton label="Find Yield" icon={<Search className="h-5 w-5" />} onClick={() => sendText('Find yield')} />
         <ActionButton label="Stake SOL" icon={<Sprout className="h-5 w-5" />} onClick={() => sendText('Stake SOL')} />
+      </section>
+
+      <section className="panel flex items-center gap-3 p-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/15 text-amber-700">
+          <BellRing className="h-5 w-5" />
+        </div>
+        <div>
+          <h2 className="font-semibold">Monitoring is armed</h2>
+          <p className="text-sm text-[var(--app-muted)]">LoopTreasury watches large moves, alerts, and position changes.</p>
+        </div>
       </section>
 
       <section className="panel divide-y divide-black/10 p-4">
@@ -91,10 +110,23 @@ export default function Dashboard() {
 
 function ActionButton({ label, icon, onClick }: { label: string; icon: ReactNode; onClick: () => void }) {
   return (
-    <button type="button" className="panel flex h-20 flex-col items-center justify-center gap-2 font-medium" onClick={onClick}>
+    <button
+      type="button"
+      className="panel flex h-20 flex-col items-center justify-center gap-2 font-medium transition hover:border-emerald-700/30 hover:bg-emerald-600/5"
+      onClick={onClick}
+    >
       {icon}
       <span className="text-sm">{label}</span>
     </button>
+  )
+}
+
+function MiniMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="panel p-3">
+      <div className="text-xs text-[var(--app-muted)]">{label}</div>
+      <div className="mono-tabular truncate text-sm font-semibold">{value}</div>
+    </div>
   )
 }
 

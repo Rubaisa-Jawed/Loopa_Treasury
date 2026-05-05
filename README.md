@@ -77,8 +77,9 @@ cp .env.example .env
 ```env
 TELEGRAM_BOT_TOKEN=...
 ANTHROPIC_API_KEY=...
+ANTHROPIC_MODEL=claude-sonnet-4-6
 HELIUS_API_KEY=...
-DATABASE_URL=postgres://pilot:pilot_dev@localhost:5432/pilot
+DATABASE_URL=postgres://pilot:pilot_dev@localhost:5433/pilot
 REDIS_URL=redis://localhost:6379
 SOLANA_RPC_URL=https://mainnet.helius-rpc.com/?api-key=...
 HELIUS_RPC_URL=https://mainnet.helius-rpc.com/?api-key=...
@@ -97,7 +98,7 @@ docker compose -f infra/docker-compose.yml up -d
 pnpm --filter @pilot/bot db:migrate
 ```
 
-For local hackathon demos you can also run `apps/bot/src/db/migrations/0000_initial.sql` directly against Postgres.
+The migration script loads the root `.env` file and applies the idempotent SQL files in `apps/bot/src/db/migrations`.
 
 ## Run Locally
 
@@ -112,6 +113,13 @@ Or run each app:
 ```bash
 pnpm --filter @pilot/bot dev
 pnpm --filter @pilot/web dev
+```
+
+Run validation tests:
+
+```bash
+pnpm --filter @pilot/bot test
+pnpm build
 ```
 
 The Mini App runs at `http://localhost:5173`. The bot uses long polling in development and Telegram webhooks in production when `NODE_ENV=production` and `TELEGRAM_WEBHOOK_URL` are set.

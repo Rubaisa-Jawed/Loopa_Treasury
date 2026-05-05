@@ -3,6 +3,7 @@ import { getKaminoYield } from '../../solana/kamino.js'
 import { getMarinadeYield } from '../../solana/marinade.js'
 import { getRaydiumYield } from '../../solana/raydium.js'
 import { logger } from '../../utils/logger.js'
+import { parseYieldSearchInput } from './validation.js'
 
 export interface YieldParams {
   token: string
@@ -12,11 +13,12 @@ export interface YieldParams {
 
 export async function getYieldOpportunities(params: YieldParams): Promise<YieldOpportunity[]> {
   try {
-    logger.info({ token: params.token, riskAppetite: params.riskAppetite }, 'Agent tool: get_yield_opportunities')
+    const safeParams = parseYieldSearchInput(params)
+    logger.info({ token: safeParams.token, riskAppetite: safeParams.riskAppetite }, 'Agent tool: get_yield_opportunities')
     const [kamino, raydium, marinade] = await Promise.all([
-      getKaminoYield(params.token, params.riskAppetite),
-      getRaydiumYield(params.token, params.riskAppetite),
-      getMarinadeYield(params.token)
+      getKaminoYield(safeParams.token, safeParams.riskAppetite),
+      getRaydiumYield(safeParams.token, safeParams.riskAppetite),
+      getMarinadeYield(safeParams.token)
     ])
 
     return [...kamino, ...raydium, ...marinade]

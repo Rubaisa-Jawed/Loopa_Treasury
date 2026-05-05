@@ -14,6 +14,7 @@ import { getRedis } from '../../utils/redis.js'
 import { formatTokenAmount } from '../../utils/format.js'
 import { logger } from '../../utils/logger.js'
 import { signAndSendWithPhantom } from '../mcp/phantom.js'
+import { parsePrepareSwapInput } from './validation.js'
 
 interface PrepareSwapParams {
   fromToken: string
@@ -37,24 +38,30 @@ export interface PreparedSwapResult extends AgentResponse {
 
 export async function prepareSwap(params: PrepareSwapParams): Promise<PreparedSwapResult> {
   try {
+    const safeParams = parsePrepareSwapInput(params)
     logger.info(
-      { fromToken: params.fromToken, toToken: params.toToken, amount: params.amount, walletAddress: params.walletAddress },
+      {
+        fromToken: safeParams.fromToken,
+        toToken: safeParams.toToken,
+        amount: safeParams.amount,
+        walletAddress: safeParams.walletAddress
+      },
       'Agent tool: swap_tokens prepare'
     )
 
-    if (!validateSolanaAddress(params.walletAddress)) {
+    if (!validateSolanaAddress(safeParams.walletAddress)) {
       throw new Error('Invalid wallet address')
     }
 
-    if (!Number.isFinite(params.amount) || params.amount <= 0) {
+    if (!Number.isFinite(safeParams.amount) || safeParams.amount <= 0) {
       throw new Error('Swap amount must be greater than zero')
     }
 
-    const inputMint = tokenSymbolToMint(params.fromToken)
-    const outputMint = tokenSymbolToMint(params.toToken)
-    const atomicAmount = amountToAtomic(params.amount, params.fromToken)
+    const inputMint = tokenSymbolToMint(safeParams.fromToken)
+    const outputMint = tokenSymbolToMint(safeParams.toToken)
+    const atomicAmount = amountToAtomic(safeParams.amount, safeParams.fromToken)
     const quote = await getQuote(inputMint, outputMint, atomicAmount, 50)
-    const expectedOutput = atomicToAmount(quote.outAmount, params.toToken)
+    const expectedOutput = atomicToAmount(quote.outAmount, safeParams.toToken)
     const priceImpact = Number(quote.priceImpactPct) || 0
     const route = routeLabels(quote)
     const fee = estimateRouteFee(quote, params.fromToken)
@@ -62,9 +69,9 @@ export async function prepareSwap(params: PrepareSwapParams): Promise<PreparedSw
 
     const pending: PendingSwap = {
       id: swapId,
-      fromToken: params.fromToken.toUpperCase(),
-      toToken: params.toToken.toUpperCase(),
-      inputAmount: params.amount,
+      fromToken: safeParams.fromToken.toUpperCase(),
+      toToken: safeParams.toToken.toUpperCase(),
+      inputAmount: safeParams.amount,
       expectedOutput,
       priceImpact,
       fee,
@@ -75,24 +82,24 @@ export async function prepareSwap(params: PrepareSwapParams): Promise<PreparedSw
     const stored: StoredSwap = {
       pending,
       quote,
-      walletAddress: params.walletAddress,
+      walletAddress: safeParams.walletAddress,
       createdAt: new Date().toISOString()
     }
 
     await getRedis().set(`swap:${swapId}`, JSON.stringify(stored), 'EX', 5 * 60)
 
     const warning =
-      params.amount >= 500
+      safeParams.amount >= 500
         ? '\n\n*Note:* This is over 500 units. Double-check price impact and expected output before confirming.'
         : ''
 
     const text = [
       "*Here's your swap preview*",
       '',
-      `Send: *${formatTokenAmount(params.amount, params.fromToken)}*`,
-      `Receive: *~${formatTokenAmount(expectedOutput, params.toToken)}*`,
+      `Send: *${formatTokenAmount(safeParams.amount, safeParams.fromToken)}*`,
+      `Receive: *~${formatTokenAmount(expectedOutput, safeParams.toToken)}*`,
       `Price impact: *${(priceImpact * 100).toFixed(2)}%*`,
-      `Estimated fee: *${formatTokenAmount(fee, params.fromToken)}*`,
+      `Estimated fee: *${formatTokenAmount(fee, safeParams.fromToken)}*`,
       `Route: ${route.length > 0 ? route.join(' -> ') : 'Jupiter best route'}`,
       '',
       'Ready to execute? This expires in 5 minutes.',

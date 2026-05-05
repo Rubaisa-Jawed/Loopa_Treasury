@@ -5,6 +5,7 @@ import type { AgentResponse, InlineKeyboard, RiskAppetite } from '@pilot/shared'
 import type { Conversation, User } from '../db/schema.js'
 import { logger } from '../utils/logger.js'
 import { asRecord, asString } from '../utils/http.js'
+import { env } from '../utils/env.js'
 import { SYSTEM_PROMPT } from './prompt.js'
 import * as tools from './tools/index.js'
 
@@ -45,9 +46,11 @@ export async function runAgent({ message, history, user }: AgentInput): Promise<
     ]
 
     const result = await generateText({
-      model: anthropic('claude-sonnet-4-20250514'),
+      model: anthropic(env.ANTHROPIC_MODEL),
       system: SYSTEM_PROMPT,
       prompt,
+      temperature: 0.2,
+      maxOutputTokens: 650,
       tools: {
         get_portfolio_balances: tool({
           description: 'Fetch all token balances and DeFi positions for the user wallet',
@@ -141,7 +144,7 @@ export async function runAgent({ message, history, user }: AgentInput): Promise<
           }
         })
       },
-      stopWhen: stepCountIs(10)
+      stopWhen: stepCountIs(6)
     })
 
     return parseAgentResponse(result as AgentTextResult)

@@ -2,12 +2,13 @@
 
 :root {
   color-scheme: light dark;
-  --app-bg: var(--tg-theme-bg-color, #f7f8fb);
-  --app-text: var(--tg-theme-text-color, #16202a);
-  --app-muted: var(--tg-theme-hint-color, #6c7680);
+  --app-bg: var(--tg-theme-bg-color, #f3f6f8);
+  --app-text: var(--tg-theme-text-color, #111827);
+  --app-muted: var(--tg-theme-hint-color, #667085);
   --app-panel: var(--tg-theme-secondary-bg-color, #ffffff);
-  --app-button: var(--tg-theme-button-color, #1f8f72);
+  --app-button: var(--tg-theme-button-color, #147d64);
   --app-button-text: var(--tg-theme-button-text-color, #ffffff);
+  --app-border: color-mix(in srgb, var(--app-muted) 20%, transparent);
 }
 
 * {
@@ -32,11 +33,22 @@ input {
 
 .panel {
   background: var(--app-panel);
-  border: 1px solid color-mix(in srgb, var(--app-muted) 18%, transparent);
+  border: 1px solid var(--app-border);
   border-radius: 8px;
+  box-shadow: 0 1px 2px rgb(16 24 40 / 0.04);
 }
 
 .tg-button {
   background: var(--app-button);
   color: var(--app-button-text);
+}
+
+.metric-band {
+  background:
+    linear-gradient(135deg, rgb(20 125 100 / 0.1), transparent 45%),
+    linear-gradient(90deg, var(--app-panel), color-mix(in srgb, var(--app-panel) 82%, #d8efe7));
+}
+
+.mono-tabular {
+  font-variant-numeric: tabular-nums;
 }

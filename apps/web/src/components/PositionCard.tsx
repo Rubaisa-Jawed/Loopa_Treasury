@@ -22,7 +22,7 @@ export default function PositionCard({ position }: PositionCardProps) {
             </div>
           </div>
         </div>
-        <div className="rounded-md bg-emerald-600/12 px-2 py-1 text-sm font-medium text-emerald-700">
+        <div className="mono-tabular rounded-md bg-emerald-600/12 px-2 py-1 text-sm font-medium text-emerald-700">
           {position.apy.toFixed(2)}%
         </div>
       </div>
