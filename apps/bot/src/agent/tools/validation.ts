@@ -32,7 +32,8 @@ export const prepareSwapSchema = z
     fromToken: tokenIdentifierSchema,
     toToken: tokenIdentifierSchema,
     amount: humanAmountSchema,
-    walletAddress: solanaAddressSchema
+    walletAddress: solanaAddressSchema,
+    quoteOnly: z.boolean().optional()
   })
   .refine((value) => value.fromToken.trim().toUpperCase() !== value.toToken.trim().toUpperCase(), {
     message: 'Swap input and output tokens must be different',

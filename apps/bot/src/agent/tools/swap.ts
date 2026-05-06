@@ -11,7 +11,7 @@ import {
   type QuoteResponse
 } from '../../solana/jupiter.js'
 import { getRedis } from '../../utils/redis.js'
-import { formatTokenAmount } from '../../utils/format.js'
+import { formatFixedTable, formatTokenAmount } from '../../utils/format.js'
 import { logger } from '../../utils/logger.js'
 import { signAndSendWithPhantom } from '../mcp/phantom.js'
 import { parsePrepareSwapInput } from './validation.js'
@@ -21,6 +21,7 @@ interface PrepareSwapParams {
   toToken: string
   amount: number
   walletAddress: string
+  quoteOnly?: boolean
 }
 
 interface StoredSwap {
@@ -64,7 +65,7 @@ export async function prepareSwap(params: PrepareSwapParams): Promise<PreparedSw
     const expectedOutput = atomicToAmount(quote.outAmount, safeParams.toToken)
     const priceImpact = Number(quote.priceImpactPct) || 0
     const route = routeLabels(quote)
-    const fee = estimateRouteFee(quote, params.fromToken)
+    const fee = estimateRouteFee(quote, safeParams.fromToken)
     const swapId = randomUUID()
 
     const pending: PendingSwap = {
@@ -86,23 +87,37 @@ export async function prepareSwap(params: PrepareSwapParams): Promise<PreparedSw
       createdAt: new Date().toISOString()
     }
 
-    await getRedis().set(`swap:${swapId}`, JSON.stringify(stored), 'EX', 5 * 60)
+    if (!safeParams.quoteOnly) {
+      await getRedis().set(`swap:${swapId}`, JSON.stringify(stored), 'EX', 5 * 60)
+    }
 
     const warning =
       safeParams.amount >= 500
         ? '\n\n*Note:* This is over 500 units. Double-check price impact and expected output before confirming.'
         : ''
 
+    const quoteTable = formatFixedTable(
+      ['Item', 'Value'],
+      [
+        ['Send', formatTokenAmount(safeParams.amount, safeParams.fromToken)],
+        ['Receive', `~${formatTokenAmount(expectedOutput, safeParams.toToken)}`],
+        ['Impact', `${(priceImpact * 100).toFixed(2)}%`],
+        ['Fee', formatTokenAmount(fee, safeParams.fromToken)]
+      ]
+    )
+
     const text = [
-      "*Here's your swap preview*",
+      '*Swap Quote*',
       '',
-      `Send: *${formatTokenAmount(safeParams.amount, safeParams.fromToken)}*`,
-      `Receive: *~${formatTokenAmount(expectedOutput, safeParams.toToken)}*`,
-      `Price impact: *${(priceImpact * 100).toFixed(2)}%*`,
-      `Estimated fee: *${formatTokenAmount(fee, safeParams.fromToken)}*`,
+      '```',
+      quoteTable,
+      '```',
+      '',
       `Route: ${route.length > 0 ? route.join(' -> ') : 'Jupiter best route'}`,
       '',
-      'Ready to execute? This expires in 5 minutes.',
+      safeParams.quoteOnly
+        ? 'Quote only. Nothing is executable from this message.'
+        : 'Ready to execute? This expires in 5 minutes.',
       warning
     ].join('\n')
 
@@ -110,9 +125,9 @@ export async function prepareSwap(params: PrepareSwapParams): Promise<PreparedSw
       kind: 'pending_swap',
       swapId,
       details: pending,
-      pendingActionId: swapId,
+      pendingActionId: safeParams.quoteOnly ? undefined : swapId,
       text,
-      inlineKeyboard: confirmationKeyboard(swapId)
+      inlineKeyboard: safeParams.quoteOnly ? undefined : confirmationKeyboard(swapId)
     }
   } catch (error) {
     logger.error({ error, params }, 'Prepare swap failed')

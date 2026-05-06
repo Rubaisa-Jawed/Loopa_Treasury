@@ -27,7 +27,7 @@ const envSchema = z.object({
   X402_DATA_ENDPOINT: optionalUrl,
   AGENT_WALLET_PRIVATE_KEY: z.string().optional().or(z.literal('')),
   PHANTOM_MCP_SERVER_URL: optionalUrl,
-  JUPITER_API_URL: z.string().url().default('https://quote-api.jup.ag/v6'),
+  JUPITER_API_URL: z.string().url().default('https://lite-api.jup.ag/swap/v1'),
   HELIUS_RPC_URL: z.string().url().optional().or(z.literal(''))
 })
 

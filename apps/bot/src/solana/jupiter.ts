@@ -82,51 +82,68 @@ export async function getQuote(
   amount: string,
   slippageBps = 50
 ): Promise<QuoteResponse> {
-  try {
-    const url = new URL(`${env.JUPITER_API_URL.replace(/\/$/, '')}/quote`)
-    url.searchParams.set('inputMint', inputMint)
-    url.searchParams.set('outputMint', outputMint)
-    url.searchParams.set('amount', amount)
-    url.searchParams.set('slippageBps', slippageBps.toString())
+  const bases = jupiterApiBases()
+  let lastError: unknown
 
-    const response = await fetchJson<QuoteResponse>(url.toString())
-    logger.info(
-      {
-        inputMint,
-        outputMint,
-        inAmount: response.inAmount,
-        outAmount: response.outAmount,
-        priceImpactPct: response.priceImpactPct
-      },
-      'Fetched Jupiter quote'
-    )
-    return response
-  } catch (error) {
-    logger.error({ error, inputMint, outputMint, amount }, 'Failed to fetch Jupiter quote')
-    throw error
+  for (const base of bases) {
+    try {
+      const url = new URL(`${base}/quote`)
+      url.searchParams.set('inputMint', inputMint)
+      url.searchParams.set('outputMint', outputMint)
+      url.searchParams.set('amount', amount)
+      url.searchParams.set('slippageBps', slippageBps.toString())
+
+      const response = await fetchJson<QuoteResponse>(url.toString())
+      logger.info(
+        {
+          base,
+          inputMint,
+          outputMint,
+          inAmount: response.inAmount,
+          outAmount: response.outAmount,
+          priceImpactPct: response.priceImpactPct
+        },
+        'Fetched Jupiter quote'
+      )
+      return response
+    } catch (error) {
+      lastError = error
+      logger.warn({ error, base, inputMint, outputMint, amount }, 'Jupiter quote endpoint failed; trying next base')
+    }
   }
+
+  logger.error({ error: lastError, inputMint, outputMint, amount }, 'Failed to fetch Jupiter quote from all bases')
+  throw lastError instanceof Error ? lastError : new Error('Jupiter quote failed')
 }
 
 export async function buildSwapTransaction(quoteResponse: QuoteResponse, userPublicKey: string): Promise<SwapBuildResponse> {
-  try {
-    const url = `${env.JUPITER_API_URL.replace(/\/$/, '')}/swap`
-    return await fetchJson<SwapBuildResponse>(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        quoteResponse,
-        userPublicKey,
-        wrapAndUnwrapSol: true,
-        dynamicComputeUnitLimit: true,
-        prioritizationFeeLamports: 'auto'
+  const bases = jupiterApiBases()
+  let lastError: unknown
+
+  for (const base of bases) {
+    try {
+      const url = `${base}/swap`
+      return await fetchJson<SwapBuildResponse>(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          quoteResponse,
+          userPublicKey,
+          wrapAndUnwrapSol: true,
+          dynamicComputeUnitLimit: true,
+          prioritizationFeeLamports: 'auto'
+        })
       })
-    })
-  } catch (error) {
-    logger.error({ error, userPublicKey }, 'Failed to build Jupiter swap transaction')
-    throw error
+    } catch (error) {
+      lastError = error
+      logger.warn({ error, base, userPublicKey }, 'Jupiter swap build endpoint failed; trying next base')
+    }
   }
+
+  logger.error({ error: lastError, userPublicKey }, 'Failed to build Jupiter swap transaction')
+  throw lastError instanceof Error ? lastError : new Error('Jupiter swap build failed')
 }
 
 export async function getTokenPrice(token: string): Promise<number> {
@@ -157,4 +174,15 @@ export async function getTokenPrice(token: string): Promise<number> {
 
 export function routeLabels(quote: QuoteResponse): string[] {
   return quote.routePlan.map((route) => route.swapInfo.label ?? route.swapInfo.ammKey).filter(Boolean)
+}
+
+function jupiterApiBases(): string[] {
+  return Array.from(
+    new Set([
+      env.JUPITER_API_URL.replace(/\/$/, ''),
+      'https://lite-api.jup.ag/swap/v1',
+      'https://api.jup.ag/swap/v1',
+      'https://quote-api.jup.ag/v6'
+    ])
+  )
 }

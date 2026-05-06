@@ -1,6 +1,7 @@
 import { getConversationHistory, getUserByTelegramId, saveConversation, updateUserWallet } from '../../db/queries.js'
 import { runAgent } from '../../agent/index.js'
 import { getPortfolioBalances } from '../../agent/tools/portfolio.js'
+import { prepareSwap } from '../../agent/tools/swap.js'
 import { validateSolanaAddress } from '../../solana/wallet.js'
 import { formatPortfolioMessage } from '../../utils/format.js'
 import { logger } from '../../utils/logger.js'
@@ -30,6 +31,19 @@ export async function messageHandler(ctx: PilotContext): Promise<void> {
 
     if (!user.walletAddress) {
       await replyMarkdown(ctx, 'Please connect your wallet first. Use /start to begin.')
+      return
+    }
+
+    const directSwap = parseDirectSwapQuote(text)
+    if (directSwap) {
+      const response = await prepareSwap({
+        ...directSwap,
+        walletAddress: user.walletAddress
+      })
+      await saveConversation(user.id, text, response.text)
+      await replyMarkdown(ctx, response.text, {
+        reply_markup: toGrammyInlineKeyboard(response.inlineKeyboard)
+      })
       return
     }
 
@@ -150,4 +164,34 @@ function isWebAppPayload(value: unknown): value is WebAppPayload {
   }
 
   return false
+}
+
+interface DirectSwapQuote {
+  amount: number
+  fromToken: string
+  toToken: string
+  quoteOnly: boolean
+}
+
+function parseDirectSwapQuote(text: string): DirectSwapQuote | undefined {
+  const normalized = text.replaceAll(',', '').trim()
+  const match = normalized.match(
+    /\b(?:prepare\s+(?:a\s+)?quote\s+(?:to\s+)?swap|quote\s+(?:a\s+)?swap|swap)\s+(\d+(?:\.\d+)?)\s+([A-Za-z0-9]{2,44})\s+(?:to|for|into|->)\s+([A-Za-z0-9]{2,44})/i
+  )
+
+  if (!match) {
+    return undefined
+  }
+
+  const amount = Number(match[1])
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return undefined
+  }
+
+  return {
+    amount,
+    fromToken: match[2],
+    toToken: match[3],
+    quoteOnly: /\b(do not execute|don't execute|quote only|no execute|without executing)\b/i.test(text)
+  }
 }

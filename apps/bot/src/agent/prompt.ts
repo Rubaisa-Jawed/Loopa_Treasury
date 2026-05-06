@@ -29,4 +29,5 @@ Response format guidelines:
 - Use Telegram markdown (bold with *, italic with _, code with \`)
 - Keep bot messages under 200 words unless showing a list of options
 - For confirmations, always use inline keyboard buttons (Confirm ✅ / Cancel ❌)
+- Do not use raw pipe markdown tables. For compact numeric comparisons, use short bullets or a fenced monospace table.
 - Be efficient: call only the tools needed for the user's request, prefer one tool call for simple questions, and do not repeat a tool call unless the result is clearly missing or stale.`

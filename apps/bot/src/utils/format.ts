@@ -60,14 +60,37 @@ export function formatYieldOpportunities(opportunities: YieldOpportunity[]): str
     return 'I could not find reliable yield options for that token right now.'
   }
 
-  return opportunities
-    .map(
-      (opportunity, index) =>
-        `${index + 1}. *${opportunity.protocol}* ${opportunity.type}\nAPY: *${opportunity.apy.toFixed(
-          2
-        )}%* | TVL: ${formatCompactUsd(opportunity.tvl)} | Risk: ${opportunity.risk}\n${opportunity.description}`
-    )
-    .join('\n\n')
+  const rows = opportunities.map((opportunity, index) => [
+    `${index + 1}`,
+    opportunity.protocol.slice(0, 12),
+    `${opportunity.apy.toFixed(2)}%`,
+    formatCompactUsd(opportunity.tvl),
+    opportunity.risk
+  ])
+
+  const table = formatFixedTable(['#', 'Protocol', 'APY', 'TVL', 'Risk'], rows)
+  const pick = opportunities[0]
+
+  return [
+    '*Yield Opportunities*',
+    '',
+    '```',
+    table,
+    '```',
+    '',
+    `*Pick:* ${pick.protocol} ${pick.type} at ${pick.apy.toFixed(2)}% APY.`,
+    pick.description
+  ].join('\n')
+}
+
+export function formatFixedTable(headers: string[], rows: string[][]): string {
+  const widths = headers.map((header, index) =>
+    Math.max(header.length, ...rows.map((row) => (row[index] ?? '').length))
+  )
+  const render = (values: string[]) => values.map((value, index) => value.padEnd(widths[index])).join('  ')
+  const separator = widths.map((width) => '-'.repeat(width)).join('  ')
+
+  return [render(headers), separator, ...rows.map(render)].join('\n')
 }
 
 function formatTokenLine(token: TokenBalance): string {

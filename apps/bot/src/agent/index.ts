@@ -6,6 +6,7 @@ import type { Conversation, User } from '../db/schema.js'
 import { logger } from '../utils/logger.js'
 import { asRecord, asString } from '../utils/http.js'
 import { env } from '../utils/env.js'
+import { formatYieldOpportunities } from '../utils/format.js'
 import { SYSTEM_PROMPT } from './prompt.js'
 import * as tools from './tools/index.js'
 
@@ -71,7 +72,8 @@ export async function runAgent({ message, history, user }: AgentInput): Promise<
             fromToken: z.string().describe('Token mint address or symbol to sell'),
             toToken: z.string().describe('Token mint address or symbol to buy'),
             amount: z.number().positive().describe('Amount in human-readable units'),
-            walletAddress: z.string()
+            walletAddress: z.string(),
+            quoteOnly: z.boolean().optional().describe('True when the user asks for quote only or says do not execute')
           }),
           execute: async (params) => {
             try {
@@ -173,6 +175,13 @@ function parseAgentResponse(result: AgentTextResult): AgentResponse {
     }
   }
 
+  const yieldOutput = outputs.find(isYieldOpportunityArray)
+  if (yieldOutput) {
+    return {
+      text: formatYieldOpportunities(yieldOutput)
+    }
+  }
+
   const responseText = result.text.trim()
   if (responseText.length > 0) {
     return { text: responseText }
@@ -186,6 +195,33 @@ function parseAgentResponse(result: AgentTextResult): AgentResponse {
   return {
     text: messageResult ?? 'Done.'
   }
+}
+
+function isYieldOpportunityArray(value: unknown): value is Array<{
+  protocol: string
+  type: 'lending' | 'lp' | 'staking'
+  apy: number
+  tvl: number
+  risk: 'low' | 'medium' | 'high'
+  description: string
+  actionLabel: string
+}> {
+  return (
+    Array.isArray(value) &&
+    value.length > 0 &&
+    value.every((item) => {
+      const record = asRecord(item)
+      return (
+        typeof record?.protocol === 'string' &&
+        typeof record.type === 'string' &&
+        typeof record.apy === 'number' &&
+        typeof record.tvl === 'number' &&
+        typeof record.risk === 'string' &&
+        typeof record.description === 'string' &&
+        typeof record.actionLabel === 'string'
+      )
+    })
+  )
 }
 
 function collectToolOutputs(result: AgentTextResult): unknown[] {

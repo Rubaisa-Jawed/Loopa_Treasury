@@ -63,9 +63,10 @@ async function handleConnectWallet(ctx: PilotContext): Promise<void> {
   try {
     ctx.session.awaitingWalletAddress = true
     const keyboard = new InlineKeyboard()
-      .webApp('Open LoopTreasury Dashboard', env.TELEGRAM_MINI_APP_URL)
-      .row()
-      .url('Open Phantom', 'https://phantom.app/ul/browse/https%3A%2F%2Fpilot.local')
+    if (env.TELEGRAM_MINI_APP_URL.startsWith('https://')) {
+      keyboard.webApp('Open LoopTreasury Dashboard', env.TELEGRAM_MINI_APP_URL).row()
+    }
+    keyboard.url('Open Phantom', 'https://phantom.app/')
 
     await answerCallback(ctx)
     await replyMarkdown(
