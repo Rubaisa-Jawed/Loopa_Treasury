@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js'
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { env } from '../utils/env.js'
 import { logger } from '../utils/logger.js'
 
@@ -25,6 +25,12 @@ export function getConnection(): Connection {
   }
 
   return connection
+}
+
+export async function getSolBalance(address: string): Promise<number> {
+  const publicKey = new PublicKey(address)
+  const lamports = await getConnection().getBalance(publicKey, 'confirmed')
+  return lamports / LAMPORTS_PER_SOL
 }
 
 export async function waitForConfirmation(txSig: string): Promise<'confirmed' | 'failed'> {

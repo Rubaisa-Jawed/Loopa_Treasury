@@ -5,6 +5,7 @@ import { startCommand } from './bot/commands/start.js'
 import { portfolioCommand } from './bot/commands/portfolio.js'
 import { helpCommand } from './bot/commands/help.js'
 import { settingsCommand } from './bot/commands/settings.js'
+import { phantomCommand } from './bot/commands/phantom.js'
 import { messageHandler, webAppDataHandler } from './bot/handlers/message.js'
 import { callbackHandler } from './bot/handlers/callback.js'
 import { authMiddleware } from './bot/middleware/auth.js'
@@ -15,6 +16,7 @@ import { startAlertWorkers } from './jobs/alerts.js'
 import { closeRedis } from './utils/redis.js'
 import { env } from './utils/env.js'
 import { logger } from './utils/logger.js'
+import { closePhantomMcp } from './agent/mcp/phantom.js'
 
 const bot = new Bot<PilotContext>(env.TELEGRAM_BOT_TOKEN)
 const workers = [...startMonitoringWorkers(bot), ...startAlertWorkers(bot)]
@@ -28,6 +30,7 @@ bot.command('start', startCommand)
 bot.command('portfolio', portfolioCommand)
 bot.command('help', helpCommand)
 bot.command('settings', settingsCommand)
+bot.command('phantom', phantomCommand)
 bot.on('message:web_app_data', webAppDataHandler)
 bot.on('message:text', messageHandler)
 bot.on('callback_query:data', callbackHandler)
@@ -42,6 +45,7 @@ async function main(): Promise<void> {
       { command: 'start', description: 'Start LoopTreasury onboarding' },
       { command: 'portfolio', description: 'Show your Solana portfolio' },
       { command: 'settings', description: 'Update LoopTreasury preferences' },
+      { command: 'phantom', description: 'Connect and inspect Phantom MCP' },
       { command: 'help', description: 'Show examples and commands' }
     ])
 
@@ -78,6 +82,7 @@ async function shutdown(signal: string): Promise<void> {
     bot.stop()
 
     await Promise.all(workers.map((worker) => worker.close()))
+    await closePhantomMcp()
     await closeRedis()
     await closeDb()
 

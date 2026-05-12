@@ -20,6 +20,9 @@ interface TelegramWebApp {
     show: () => void
     hide: () => void
   }
+  HapticFeedback?: {
+    notificationOccurred: (type: 'error' | 'success' | 'warning') => void
+  }
 }
 
 interface Window {

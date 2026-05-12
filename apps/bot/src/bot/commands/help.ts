@@ -22,7 +22,7 @@ export async function helpCommand(ctx: PilotContext): Promise<void> {
         '- Alert me if SOL goes below 120',
         '- What is SOL sentiment right now?',
         '',
-        'Commands: /start, /portfolio, /settings, /help'
+        'Commands: /start, /portfolio, /phantom, /settings, /help'
       ].join('\n')
     )
   } catch (error) {

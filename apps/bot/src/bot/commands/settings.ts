@@ -18,9 +18,9 @@ export async function settingsCommand(ctx: PilotContext): Promise<void> {
     }
 
     const keyboard = new InlineKeyboard()
-      .text('Conservative 🛡️', 'risk:conservative')
-      .text('Balanced ⚖️', 'risk:balanced')
-      .text('Aggressive 🚀', 'risk:aggressive')
+      .text('Conservative', 'risk:conservative')
+      .text('Balanced', 'risk:balanced')
+      .text('Aggressive', 'risk:aggressive')
       .row()
       .text(user.dailySummaryEnabled ? 'Daily Summary: On' : 'Daily Summary: Off', 'settings:daily_summary')
       .row()

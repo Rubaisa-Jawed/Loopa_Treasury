@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import type { AgentResponse, InlineKeyboard, PendingSwap } from '@pilot/shared'
 import { tokenSymbolToMint } from '@pilot/shared'
-import { validateSolanaAddress, waitForConfirmation } from '../../solana/wallet.js'
+import { getSolBalance, validateSolanaAddress, waitForConfirmation } from '../../solana/wallet.js'
 import {
   amountToAtomic,
   atomicToAmount,
@@ -13,7 +13,11 @@ import {
 import { getRedis } from '../../utils/redis.js'
 import { formatFixedTable, formatTokenAmount } from '../../utils/format.js'
 import { logger } from '../../utils/logger.js'
-import { signAndSendWithPhantom } from '../mcp/phantom.js'
+import {
+  assertPhantomWalletMatches,
+  sendSolanaTransactionWithPhantom,
+  simulateSolanaTransactionWithPhantom
+} from '../mcp/phantom.js'
 import { parsePrepareSwapInput } from './validation.js'
 
 interface PrepareSwapParams {
@@ -30,6 +34,16 @@ interface StoredSwap {
   walletAddress: string
   createdAt: string
 }
+
+interface StoredPhantomSwap {
+  pending: PendingSwap
+  walletAddress: string
+  transaction: string
+  simulationSummary: string
+  createdAt: string
+}
+
+const SOL_FEE_BUFFER = 0.003
 
 export interface PreparedSwapResult extends AgentResponse {
   kind: 'pending_swap'
@@ -135,9 +149,12 @@ export async function prepareSwap(params: PrepareSwapParams): Promise<PreparedSw
   }
 }
 
-export async function executeSwap(swapId: string, walletAddress: string): Promise<{ signature: string; status: string }> {
+export async function simulateSwapExecution(
+  swapId: string,
+  walletAddress: string
+): Promise<{ pending: PendingSwap; simulationSummary: string }> {
   try {
-    logger.info({ swapId, walletAddress }, 'Executing confirmed swap')
+    logger.info({ swapId, walletAddress }, 'Simulating confirmed swap with Phantom MCP')
     if (!validateSolanaAddress(walletAddress)) {
       throw new Error('Invalid wallet address')
     }
@@ -152,14 +169,62 @@ export async function executeSwap(swapId: string, walletAddress: string): Promis
       throw new Error('Swap wallet mismatch')
     }
 
-    // Transaction execution is intentionally separated from quote preparation.
-    // The quote is stored with a short TTL, then rebuilt only after the user taps Confirm.
+    await assertPhantomWalletMatches(walletAddress)
+    await assertEnoughSolForLiveSwap(stored.pending, walletAddress)
     const built = await buildSwapTransaction(stored.quote, walletAddress)
-    const signature = await signAndSendWithPhantom(built.swapTransaction)
+    const simulation = await simulateSolanaTransactionWithPhantom(built.swapTransaction)
+    if (simulation.blocked) {
+      throw new Error(simulation.summary)
+    }
+
+    const phantomSwap: StoredPhantomSwap = {
+      pending: stored.pending,
+      walletAddress,
+      transaction: built.swapTransaction,
+      simulationSummary: simulation.summary,
+      createdAt: new Date().toISOString()
+    }
+    await getRedis().set(`phantom:swap:${swapId}`, JSON.stringify(phantomSwap), 'EX', 5 * 60)
+
+    return {
+      pending: stored.pending,
+      simulationSummary: simulation.summary
+    }
+  } catch (error) {
+    logger.error({ error, swapId, walletAddress }, 'Swap simulation failed')
+    throw error
+  }
+}
+
+export async function executeSwap(
+  swapId: string,
+  walletAddress: string
+): Promise<{ signature: string; status: string; pending: PendingSwap }> {
+  try {
+    logger.info({ swapId, walletAddress }, 'Executing Phantom-approved swap')
+    if (!validateSolanaAddress(walletAddress)) {
+      throw new Error('Invalid wallet address')
+    }
+
+    const raw = await getRedis().get(`phantom:swap:${swapId}`)
+    if (!raw) {
+      throw new Error('Swap simulation expired')
+    }
+
+    const stored = JSON.parse(raw) as StoredPhantomSwap
+    if (stored.walletAddress !== walletAddress) {
+      throw new Error('Swap wallet mismatch')
+    }
+
+    await assertPhantomWalletMatches(walletAddress)
+    await assertEnoughSolForLiveSwap(stored.pending, walletAddress)
+    const sendResult = await sendSolanaTransactionWithPhantom(stored.transaction)
+    const signature = sendResult.signature
     const status = await waitForConfirmation(signature)
 
     await getRedis().del(`swap:${swapId}`)
-    return { signature, status }
+    await getRedis().del(`phantom:swap:${swapId}`)
+    return { signature, status, pending: stored.pending }
   } catch (error) {
     logger.error({ error, swapId, walletAddress }, 'Execute swap failed')
     throw error
@@ -169,6 +234,7 @@ export async function executeSwap(swapId: string, walletAddress: string): Promis
 export async function cancelSwap(swapId: string): Promise<void> {
   try {
     await getRedis().del(`swap:${swapId}`)
+    await getRedis().del(`phantom:swap:${swapId}`)
   } catch (error) {
     logger.error({ error, swapId }, 'Failed to cancel swap')
   }
@@ -191,11 +257,31 @@ function confirmationKeyboard(swapId: string): InlineKeyboard {
   return {
     inline_keyboard: [
       [
-        { text: 'Confirm ✅', callback_data: `confirm:swap:${swapId}` },
-        { text: 'Cancel ❌', callback_data: `cancel:swap:${swapId}` }
+        { text: 'Confirm', callback_data: `confirm:swap:${swapId}` },
+        { text: 'Cancel', callback_data: `cancel:swap:${swapId}` }
       ]
     ]
   }
+}
+
+async function assertEnoughSolForLiveSwap(pending: PendingSwap, walletAddress: string): Promise<void> {
+  const balance = await getSolBalance(walletAddress)
+  const inputSol = pending.fromToken.toUpperCase() === 'SOL' ? pending.inputAmount : 0
+  const required = inputSol + SOL_FEE_BUFFER
+
+  if (balance + 0.000000001 >= required) {
+    return
+  }
+
+  throw new Error(
+    [
+      'Insufficient mainnet SOL in the Phantom agent wallet.',
+      `Wallet: ${walletAddress}`,
+      `Current balance: ${balance.toFixed(6)} SOL`,
+      `Needed for this live test: at least ${required.toFixed(6)} SOL`,
+      'Fund the wallet from /phantom, refresh the balance, then try again.'
+    ].join('\n')
+  )
 }
 
 function estimateRouteFee(quote: QuoteResponse, fromToken: string): number {

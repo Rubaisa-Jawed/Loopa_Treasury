@@ -50,7 +50,7 @@ packages/shared: shared TypeScript contracts
 - Anthropic API key
 - Helius API key
 - PostgreSQL and Redis URLs, or the local Docker services below
-- Optional: Phantom MCP server URL, Privy app credentials, x402 endpoint
+- Optional: Privy app credentials and a real x402 data endpoint
 
 ## Setup
 
@@ -84,6 +84,9 @@ REDIS_URL=redis://localhost:6379
 SOLANA_RPC_URL=https://mainnet.helius-rpc.com/?api-key=...
 HELIUS_RPC_URL=https://mainnet.helius-rpc.com/?api-key=...
 TELEGRAM_MINI_APP_URL=http://localhost:5173
+PHANTOM_MCP_COMMAND=npx
+PHANTOM_MCP_ARGS=-y @phantom/mcp-server@latest
+PHANTOM_MCP_NETWORK_ID=solana:mainnet
 ```
 
 4. Start local services:
@@ -128,6 +131,7 @@ The Mini App runs at `http://localhost:5173`. The bot uses long polling in devel
 
 - `/start` creates a LoopTreasury profile and starts wallet onboarding
 - `/portfolio` fetches wallet balances and active DeFi positions
+- `/phantom` starts/checks Phantom MCP and shows the executable test wallet
 - `/settings` updates risk appetite and notification preferences
 - `/help` shows examples
 
@@ -149,14 +153,68 @@ LoopTreasury never executes a transaction from the AI tool call. Swap flow is:
 2. Jupiter returns a quote.
 3. LoopTreasury stores `swap:{uuid}` in Redis for 5 minutes.
 4. The bot sends Confirm and Cancel buttons.
-5. Only the Confirm callback calls `executeSwap`.
-6. Phantom MCP signs and sends the built Jupiter transaction.
+5. The first Confirm builds the Jupiter transaction and asks Phantom MCP to simulate it.
+6. The bot sends a second Sign & Send button only if simulation is not blocked.
+7. Only the second approval calls `executeSwap`.
+8. Phantom MCP signs and sends the built Jupiter transaction.
 
 If Phantom MCP is not configured, execution fails safely after confirmation and the quote flow remains demoable.
 
+## Phantom MCP Flow
+
+LoopTreasury launches Phantom MCP through stdio using:
+
+```bash
+npx -y @phantom/mcp-server@latest
+```
+
+Run `/phantom` in Telegram to check the connection. The first run may open Phantom device authentication on the developer machine. Phantom's current MCP flow uses browser-based sign-in with Google or Apple, then creates a dedicated embedded agent wallet. This wallet is separate from your existing mobile Phantom wallet. For executable hackathon tests:
+
+1. Run `/start` so your Telegram profile exists.
+2. Run `/phantom`.
+3. Complete Phantom authentication if prompted.
+4. Fund the displayed MCP agent wallet with a tiny SOL amount for fees.
+5. Tap `Use MCP wallet for tests`.
+6. Ask: `Swap 0.001 SOL to USDC`.
+7. Tap `Confirm`, review the Phantom simulation, then tap `Sign & Send`.
+
+Users may still paste any public Solana address for portfolio and quote analysis, but those wallets are read-only. LoopTreasury only signs from the Phantom MCP agent wallet and never asks for a private key or seed phrase.
+
+On mobile, the `Open Phantom App` button uses Phantom's universal browse deeplink (`https://phantom.app/ul/browse/...`) so installed Phantom apps can intercept the link. If the Mini App is only running at `localhost`, the button opens Phantom itself; for a real mobile dashboard open, set `TELEGRAM_MINI_APP_URL` to a reachable HTTPS deployment.
+
+## No-Real-Funds Testing
+
+Solana local validators and Surfpool can clone accounts/programs from mainnet into a local RPC, but Phantom MCP signs and broadcasts through Phantom-supported network IDs such as `solana:mainnet`, `solana:devnet`, and `solana:testnet`. A localhost fork is useful for program/RPC tests, but it will not prove the Phantom MCP send path for the Telegram swap flow.
+
+For an end-to-end Phantom MCP signing test without real funds, run:
+
+```bash
+pnpm --filter @pilot/bot phantom:smoke
+```
+
+The smoke test targets `solana:devnet` by default, gets the Phantom MCP agent wallet, airdrops devnet SOL when needed, builds a one-lamport transfer, and asks Phantom MCP to simulate it. To also broadcast the tiny devnet transfer:
+
+```bash
+pnpm --filter @pilot/bot phantom:smoke:send
+```
+
+The production Jupiter swap flow still uses mainnet liquidity and requires real mainnet assets. For demos without funds, use `/phantom` plus the devnet smoke script to prove MCP wallet auth/signing, and use Telegram swap quotes in quote-only/watch mode to demonstrate the product flow.
+
+To run the live mainnet data path without broadcasting, use the mainnet dry run:
+
+```bash
+pnpm --filter @pilot/bot phantom:mainnet:dry-run
+```
+
+This uses the Phantom MCP wallet, fetches a real Jupiter mainnet quote, builds the real mainnet swap transaction, and calls Phantom MCP simulation on `solana:mainnet`. If the wallet has no funds, Phantom may block with an insufficient-balance simulation result; that still proves the live quote/build/simulation path without sending anything. You can change the dry-run pair or size:
+
+```bash
+pnpm --filter @pilot/bot phantom:mainnet:dry-run -- --amount=0.001 --from=SOL --to=USDC
+```
+
 ## Sponsor Integrations
 
-- Phantom: MCP signing path for `signAndSendTransaction`
+- Phantom: MCP stdio server for wallet discovery, transaction simulation, and final Solana send
 - Coinbase x402: HTTP 402 payment handshake with mock fallback for demos
 - Raydium: API v3 pool reads for LP yield discovery
 - Privy: environment and Mini App structure ready for embedded wallet onboarding

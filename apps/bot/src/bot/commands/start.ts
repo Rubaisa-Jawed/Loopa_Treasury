@@ -21,8 +21,8 @@ export async function startCommand(ctx: PilotContext): Promise<void> {
     }
 
     const keyboard = new InlineKeyboard()
-      .text('Connect Wallet 🔗', 'connect_wallet')
-      .text('How it works ℹ️', 'how_it_works')
+      .text('Connect Wallet', 'connect_wallet')
+      .text('How it works', 'how_it_works')
 
     await replyMarkdown(
       ctx,
@@ -62,7 +62,7 @@ export async function startCommand(ctx: PilotContext): Promise<void> {
 
 export function riskKeyboard(): InlineKeyboard {
   return new InlineKeyboard()
-    .text('Conservative 🛡️', 'risk:conservative')
-    .text('Balanced ⚖️', 'risk:balanced')
-    .text('Aggressive 🚀', 'risk:aggressive')
+    .text('Conservative', 'risk:conservative')
+    .text('Balanced', 'risk:balanced')
+    .text('Aggressive', 'risk:aggressive')
 }

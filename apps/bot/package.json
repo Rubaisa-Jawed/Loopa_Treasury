@@ -9,6 +9,9 @@
     "start": "node dist/index.js",
     "lint": "tsc --noEmit",
     "test": "tsx src/tests/validation.test.ts",
+    "phantom:smoke": "tsx src/scripts/phantomDevnetSmoke.ts",
+    "phantom:smoke:send": "tsx src/scripts/phantomDevnetSmoke.ts --send",
+    "phantom:mainnet:dry-run": "tsx src/scripts/phantomMainnetDryRun.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx src/db/migrate.ts"
   },
