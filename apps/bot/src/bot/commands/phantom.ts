@@ -7,9 +7,8 @@ import { logger } from '../../utils/logger.js'
 import { getSolBalance } from '../../solana/wallet.js'
 import {
   formatSolBalance,
-  phantomBrowseUrl,
   phantomFundingPageUrl,
-  PHANTOM_LIVE_TEST_SOL,
+  PHANTOM_LIVE_DEMO_SOL,
   solscanAccountUrl
 } from '../phantomFunding.js'
 
@@ -46,12 +45,12 @@ export async function sendPhantomStatus(ctx: PilotContext): Promise<void> {
     }
     if (walletAddress) {
       const fundingUrl = phantomFundingPageUrl(walletAddress)
-      keyboard.url('Fund in Phantom', phantomBrowseUrl(fundingUrl)).row()
+      keyboard.url('Fund with Phantom', fundingUrl).row()
       if (env.TELEGRAM_MINI_APP_URL.startsWith('https://')) {
-        keyboard.webApp('Open funding page', fundingUrl).row()
+        keyboard.webApp('Open wallet page', fundingUrl).row()
       }
       keyboard.text('Refresh balance', 'phantom:refresh').row()
-      keyboard.text('Use MCP wallet for tests', 'phantom:use_wallet').row()
+      keyboard.text('Use this wallet', 'phantom:use_wallet').row()
       keyboard.url('View wallet on Solscan', solscanAccountUrl(walletAddress)).row()
     } else {
       keyboard.text('Refresh Phantom status', 'phantom:refresh').row()
@@ -68,13 +67,13 @@ export async function sendPhantomStatus(ctx: PilotContext): Promise<void> {
         '',
         ...setup.details,
         '',
-        '*Live test checklist*',
+        '*Live setup checklist*',
         '1. Complete Phantom sign-in if prompted.',
-        `2. Fund the displayed agent wallet with ${PHANTOM_LIVE_TEST_SOL} SOL.`,
-        '3. Tap "Use MCP wallet for tests".',
+        `2. Fund the displayed agent wallet with ${PHANTOM_LIVE_DEMO_SOL} SOL.`,
+        '3. Tap "Use this wallet".',
         '4. Ask: `Swap 0.001 SOL to USDC`.',
         '',
-        'This is a dedicated Phantom agent wallet for LoopTreasury testing. It is separate from your regular mobile Phantom wallet, so mainnet SOL must be sent to the address shown above.',
+        'This is a dedicated Phantom agent wallet for LoopTreasury. It is separate from your regular mobile Phantom wallet, so mainnet SOL must be sent to the address shown above.',
         '',
         'Private keys and seed phrases are never required.'
       ].join('\n'),
@@ -104,7 +103,7 @@ interface SetupState {
 
 function formatSetupState(input: SetupStateInput): SetupState {
   if (input.walletAddress) {
-    const funded = input.solBalance !== undefined && input.solBalance >= PHANTOM_LIVE_TEST_SOL
+    const funded = input.solBalance !== undefined && input.solBalance >= PHANTOM_LIVE_DEMO_SOL
     return {
       summary: funded ? '*Status:* Connected and funded' : '*Status:* Connected, funding needed',
       details: [
@@ -113,8 +112,8 @@ function formatSetupState(input: SetupStateInput): SetupState {
         '',
         `Balance: \`${formatSolBalance(input.solBalance)} SOL\``,
         funded
-          ? 'Ready for the live 0.001 SOL test swap.'
-          : `Send ${PHANTOM_LIVE_TEST_SOL} SOL to this exact address, then tap "Refresh balance".`
+          ? 'Ready for the live 0.001 SOL swap.'
+          : `Send ${PHANTOM_LIVE_DEMO_SOL} SOL to this exact address, then tap "Refresh balance".`
       ]
     }
   }

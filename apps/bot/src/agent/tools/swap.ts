@@ -278,7 +278,7 @@ async function assertEnoughSolForLiveSwap(pending: PendingSwap, walletAddress: s
       'Insufficient mainnet SOL in the Phantom agent wallet.',
       `Wallet: ${walletAddress}`,
       `Current balance: ${balance.toFixed(6)} SOL`,
-      `Needed for this live test: at least ${required.toFixed(6)} SOL`,
+      `Needed for this live swap: at least ${required.toFixed(6)} SOL`,
       'Fund the wallet from /phantom, refresh the balance, then try again.'
     ].join('\n')
   )

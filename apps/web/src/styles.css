@@ -268,7 +268,7 @@ button {
 .hero-copy h1 {
   max-width: 780px;
   margin: 26px 0 0;
-  font-size: clamp(4rem, 11vw, 8.5rem);
+  font-size: 8.5rem;
   font-weight: 950;
   line-height: 0.84;
   text-wrap: balance;
@@ -278,7 +278,7 @@ button {
   max-width: 680px;
   margin: 28px 0 0;
   color: rgb(255 253 245 / 0.82);
-  font-size: clamp(1.05rem, 2vw, 1.32rem);
+  font-size: 1.28rem;
   line-height: 1.65;
 }
 
@@ -346,7 +346,7 @@ button {
   display: block;
   margin-bottom: 3px;
   color: #fffdf5;
-  font-size: clamp(1.1rem, 2vw, 1.46rem);
+  font-size: 1.42rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -426,7 +426,7 @@ button {
 .final-cta-content h2 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(2rem, 4vw, 4.2rem);
+  font-size: 4rem;
   font-weight: 930;
   line-height: 0.98;
   text-wrap: balance;
@@ -434,7 +434,7 @@ button {
 
 .console-header h2 {
   margin-top: 8px;
-  font-size: clamp(1.55rem, 3vw, 2.55rem);
+  font-size: 2.45rem;
 }
 
 .console-badge {
@@ -664,7 +664,7 @@ button {
 
 .feature-card h3 {
   margin: 32px 0 0;
-  font-size: clamp(1.18rem, 2vw, 1.45rem);
+  font-size: 1.38rem;
   font-weight: 920;
   line-height: 1.08;
   text-wrap: balance;
@@ -771,7 +771,7 @@ button {
 
 .allocation-visual h3 {
   margin: 8px 0 0;
-  font-size: clamp(1.35rem, 3vw, 2.45rem);
+  font-size: 2.35rem;
   font-weight: 930;
   line-height: 1.05;
   text-wrap: balance;
@@ -996,6 +996,18 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .hero-copy h1 {
+    font-size: 6.2rem;
+  }
+
+  .console-header h2,
+  .section-copy h2,
+  .section-heading h2,
+  .integration-copy h2,
+  .final-cta-content h2 {
+    font-size: 3.15rem;
+  }
+
   .agent-console {
     max-width: 680px;
   }
@@ -1030,11 +1042,24 @@ button {
   }
 
   .hero-copy h1 {
-    font-size: clamp(3.45rem, 19vw, 5.4rem);
+    font-size: 4.6rem;
   }
 
   .hero-copy p {
     margin-top: 18px;
+    font-size: 1.08rem;
+  }
+
+  .console-header h2,
+  .section-copy h2,
+  .section-heading h2,
+  .integration-copy h2,
+  .final-cta-content h2 {
+    font-size: 2.35rem;
+  }
+
+  .allocation-visual h3 {
+    font-size: 1.7rem;
   }
 
   .hero-metrics,
@@ -1093,6 +1118,18 @@ button {
   .primary-cta,
   .secondary-cta {
     width: 100%;
+  }
+
+  .hero-copy h1 {
+    font-size: 3.55rem;
+  }
+
+  .console-header h2,
+  .section-copy h2,
+  .section-heading h2,
+  .integration-copy h2,
+  .final-cta-content h2 {
+    font-size: 2rem;
   }
 
   .hero-metrics span,

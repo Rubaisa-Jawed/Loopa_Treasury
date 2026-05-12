@@ -45,7 +45,7 @@ async function main(): Promise<void> {
       { command: 'start', description: 'Start LoopTreasury onboarding' },
       { command: 'portfolio', description: 'Show your Solana portfolio' },
       { command: 'settings', description: 'Update LoopTreasury preferences' },
-      { command: 'phantom', description: 'Connect and inspect Phantom MCP' },
+      { command: 'phantom', description: 'Connect Phantom agent wallet' },
       { command: 'help', description: 'Show examples and commands' }
     ])
 

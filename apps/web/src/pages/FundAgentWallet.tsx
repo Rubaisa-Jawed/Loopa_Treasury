@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Check, Copy, ExternalLink, Send, Wallet } from 'lucide-react'
 
 interface FundAgentWalletProps {
@@ -8,16 +8,23 @@ interface FundAgentWalletProps {
 
 export default function FundAgentWallet({ walletAddress, amount }: FundAgentWalletProps) {
   const [copied, setCopied] = useState(false)
+  const shouldAutoOpen = new URLSearchParams(window.location.search).get('open') === 'phantom'
   const solanaPayUrl = useMemo(() => {
     const url = new URL(`solana:${walletAddress}`)
     url.searchParams.set('amount', amount)
     url.searchParams.set('label', 'LoopTreasury Agent Wallet')
-    url.searchParams.set('message', 'Fund LoopTreasury live test wallet')
+    url.searchParams.set('message', 'Fund LoopTreasury live wallet')
     return url.toString()
   }, [amount, walletAddress])
-  const phantomUrl = useMemo(() => {
-    const current = window.location.href
-    return `https://phantom.app/ul/browse/${encodeURIComponent(current)}?ref=${encodeURIComponent(window.location.origin)}`
+  const phantomUrls = useMemo(() => {
+    const cleanUrl = new URL(window.location.href)
+    cleanUrl.searchParams.delete('open')
+    const current = cleanUrl.toString()
+    const ref = window.location.origin
+    return {
+      app: `phantom://browse/${encodeURIComponent(current)}?ref=${encodeURIComponent(ref)}`,
+      universal: `https://phantom.app/ul/browse/${encodeURIComponent(current)}?ref=${encodeURIComponent(ref)}`
+    }
   }, [])
 
   const copyAddress = async () => {
@@ -27,6 +34,20 @@ export default function FundAgentWallet({ walletAddress, amount }: FundAgentWall
     window.setTimeout(() => setCopied(false), 1600)
   }
 
+  const openPhantom = useCallback(() => {
+    window.location.href = phantomUrls.app
+    window.setTimeout(() => {
+      window.location.href = phantomUrls.universal
+    }, 900)
+  }, [phantomUrls.app, phantomUrls.universal])
+
+  useEffect(() => {
+    if (!shouldAutoOpen) return
+
+    const timer = window.setTimeout(openPhantom, 350)
+    return () => window.clearTimeout(timer)
+  }, [openPhantom, shouldAutoOpen])
+
   return (
     <main className="mx-auto flex min-h-screen max-w-xl flex-col gap-4 px-4 py-5">
       <header className="flex items-center gap-3">
@@ -35,12 +56,12 @@ export default function FundAgentWallet({ walletAddress, amount }: FundAgentWall
         </div>
         <div className="min-w-0">
           <h1 className="text-xl font-semibold">Fund agent wallet</h1>
-          <p className="text-sm text-[var(--app-muted)]">Mainnet live test balance</p>
+          <p className="text-sm text-[var(--app-muted)]">Mainnet live balance</p>
         </div>
       </header>
 
       <section className="panel p-4">
-        <div className="text-sm text-[var(--app-muted)]">Send exactly this amount for the demo test</div>
+        <div className="text-sm text-[var(--app-muted)]">Send this amount for the live swap</div>
         <div className="mt-1 text-3xl font-semibold mono-tabular">{amount} SOL</div>
       </section>
 
@@ -62,10 +83,10 @@ export default function FundAgentWallet({ walletAddress, amount }: FundAgentWall
       </section>
 
       <section className="grid grid-cols-2 gap-2">
-        <a className="panel flex h-12 items-center justify-center gap-2 text-sm" href={phantomUrl}>
+        <button type="button" className="panel flex h-12 items-center justify-center gap-2 text-sm" onClick={openPhantom}>
           <Wallet className="h-4 w-4" />
-          <span>Open Phantom</span>
-        </a>
+          <span>Open Phantom Wallet</span>
+        </button>
         <a
           className="panel flex h-12 items-center justify-center gap-2 text-sm"
           href={`https://solscan.io/account/${walletAddress}`}
@@ -78,7 +99,7 @@ export default function FundAgentWallet({ walletAddress, amount }: FundAgentWall
       </section>
 
       <p className="text-sm leading-6 text-[var(--app-muted)]">
-        After the transfer confirms, return to Telegram and tap Refresh balance in /phantom.
+        If Phantom opens to its browser, tap Send SOL on this page. After the transfer confirms, return to Telegram and tap Refresh balance in /phantom.
       </p>
     </main>
   )

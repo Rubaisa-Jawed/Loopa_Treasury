@@ -69,10 +69,10 @@ export async function assertPhantomWalletMatches(expectedWalletAddress: string):
   if (info.solanaAddress !== expectedWalletAddress) {
     throw new Error(
       [
-        'The connected Telegram wallet is watch-only and does not match the Phantom MCP agent wallet.',
+        'The connected Telegram wallet is watch-only and does not match the Phantom agent wallet.',
         `Telegram wallet: ${expectedWalletAddress}`,
-        `Phantom MCP wallet: ${info.solanaAddress}`,
-        'For executable MCP testing, run /phantom, fund the Phantom MCP wallet with a tiny amount, then tap "Use MCP wallet for tests".'
+        `Phantom wallet: ${info.solanaAddress}`,
+        'Run /phantom, fund the Phantom wallet with a tiny amount, then tap "Use this wallet".'
       ].join('\n')
     )
   }

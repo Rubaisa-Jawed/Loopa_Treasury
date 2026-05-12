@@ -10,6 +10,8 @@
     "typecheck": "turbo build"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
+    "node-fetch": "^3.3.2",
     "turbo": "^2.5.3"
   }
 }

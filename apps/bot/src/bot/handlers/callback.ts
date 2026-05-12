@@ -17,9 +17,8 @@ import { formatTokenAmount } from '../../utils/format.js'
 import { getSolBalance } from '../../solana/wallet.js'
 import {
   formatSolBalance,
-  phantomBrowseUrl,
   phantomFundingPageUrl,
-  PHANTOM_LIVE_TEST_SOL,
+  PHANTOM_LIVE_DEMO_SOL,
   solscanAccountUrl
 } from '../phantomFunding.js'
 import { sendPhantomStatus } from '../commands/phantom.js'
@@ -93,8 +92,7 @@ async function handleConnectWallet(ctx: PilotContext): Promise<void> {
     if (env.TELEGRAM_MINI_APP_URL.startsWith('https://')) {
       keyboard.webApp('Open LoopTreasury Dashboard', env.TELEGRAM_MINI_APP_URL).row()
     }
-    keyboard.url('Open Phantom App', phantomMobileBrowseUrl()).row()
-    keyboard.url('Open Phantom Website', 'https://phantom.app/')
+    keyboard.url('Open Phantom wallet page', phantomMobileBrowseUrl()).row()
 
     await answerCallback(ctx)
     await replyMarkdown(
@@ -102,9 +100,9 @@ async function handleConnectWallet(ctx: PilotContext): Promise<void> {
       [
         '*Connect your wallet*',
         '',
-        'For this bot MVP, paste your public Solana wallet address here. LoopTreasury will use it for read-only portfolio checks.',
+        'Paste your public Solana wallet address here. LoopTreasury will use it for read-only portfolio checks.',
         '',
-        'For executable swap tests, use /phantom and connect the Phantom MCP agent wallet. Never paste a seed phrase or private key.'
+        'For live swaps, use /phantom and connect the Phantom agent wallet. Never paste a seed phrase or private key.'
       ].join('\n'),
       { reply_markup: keyboard }
     )
@@ -193,7 +191,7 @@ async function handleSwapConfirmation(ctx: PilotContext, swapId: string): Promis
     }
 
     await answerCallback(ctx, 'Simulating with Phantom...')
-    await replyMarkdown(ctx, 'Confirmed. I am building the transaction and asking Phantom MCP to simulate it first.')
+    await replyMarkdown(ctx, 'Confirmed. I am building the transaction and asking Phantom to review it first.')
     const simulation = await simulateSwapExecution(swapId, user.walletAddress)
     await replyMarkdown(
       ctx,
@@ -207,7 +205,7 @@ async function handleSwapConfirmation(ctx: PilotContext, swapId: string): Promis
         '',
         simulation.simulationSummary,
         '',
-        'Approve the simulation to sign and send with the Phantom MCP agent wallet.'
+        'Approve the simulation to sign and send with the Phantom agent wallet.'
       ].join('\n'),
       {
         reply_markup: {
@@ -240,8 +238,8 @@ async function handlePhantomFinalConfirmation(ctx: PilotContext, swapId: string)
       return
     }
 
-    await answerCallback(ctx, 'Signing with Phantom MCP...')
-    await replyMarkdown(ctx, 'Final approval received. Phantom MCP is signing and broadcasting the transaction now.')
+    await answerCallback(ctx, 'Signing with Phantom...')
+    await replyMarkdown(ctx, 'Final approval received. Phantom is signing and broadcasting the transaction now.')
     const result = await executeSwap(swapId, user.walletAddress)
     const pending = result.pending
     const solscan = `https://solscan.io/tx/${result.signature}${
@@ -314,23 +312,23 @@ async function handleUsePhantomWallet(ctx: PilotContext): Promise<void> {
     ctx.session.awaitingWalletAddress = false
     const fundingUrl = phantomFundingPageUrl(wallet.solanaAddress)
     const keyboard = new InlineKeyboard()
-      .url('Fund in Phantom', phantomBrowseUrl(fundingUrl))
+      .url('Fund with Phantom', fundingUrl)
       .row()
       .url('View wallet on Solscan', solscanAccountUrl(wallet.solanaAddress))
 
-    await answerCallback(ctx, 'MCP wallet connected.')
+    await answerCallback(ctx, 'Phantom wallet connected.')
     await replyMarkdown(
       ctx,
       [
-        '*Phantom MCP wallet connected for executable tests*',
+        '*Phantom wallet connected*',
         '',
         `Wallet: \`${wallet.solanaAddress}\``,
         '',
         `Balance: \`${formatSolBalance(solBalance)} SOL\``,
         '',
-        solBalance !== undefined && solBalance >= PHANTOM_LIVE_TEST_SOL
+        solBalance !== undefined && solBalance >= PHANTOM_LIVE_DEMO_SOL
           ? 'Ready. Ask: `Swap 0.001 SOL to USDC`.'
-          : `Before the live swap, fund this wallet with ${PHANTOM_LIVE_TEST_SOL} SOL and tap /phantom to refresh.`,
+          : `Before the live swap, fund this wallet with ${PHANTOM_LIVE_DEMO_SOL} SOL and tap /phantom to refresh.`,
         '',
         'LoopTreasury will still require two taps: first to simulate, then to sign and send.'
       ].join('\n'),
@@ -338,10 +336,10 @@ async function handleUsePhantomWallet(ctx: PilotContext): Promise<void> {
     )
   } catch (error) {
     logger.error({ error, telegramId: ctx.from?.id }, 'Failed to connect Phantom MCP wallet')
-    await answerCallback(ctx, 'Phantom MCP not ready.')
+    await answerCallback(ctx, 'Phantom wallet not ready.')
     await replyMarkdown(
       ctx,
-      'I could not get the Phantom MCP wallet yet. Run /phantom, complete Phantom authentication on this machine, then try the button again.'
+      'I could not get the Phantom wallet yet. Run /phantom, complete Phantom authentication on this machine, then try the button again.'
     )
   }
 }
@@ -383,11 +381,11 @@ function formatPhantomExecutionError(error: unknown): string {
   const message = error instanceof Error ? error.message : 'Unknown Phantom MCP error'
   if (/insufficient|balance|fund|not enough/i.test(message)) {
     return [
-      '*Live test wallet needs SOL*',
+      '*Phantom wallet needs SOL*',
       '',
       'The Phantom agent wallet is connected, but it does not have enough mainnet SOL for this swap and network fees.',
       '',
-      `Open /phantom, fund the displayed wallet with ${PHANTOM_LIVE_TEST_SOL} SOL, then try the same swap again.`
+      `Open /phantom, fund the displayed wallet with ${PHANTOM_LIVE_DEMO_SOL} SOL, then try the same swap again.`
     ].join('\n')
   }
 
@@ -409,12 +407,5 @@ function formatPhantomExecutionError(error: unknown): string {
 }
 
 function phantomMobileBrowseUrl(): string {
-  const target = env.TELEGRAM_MINI_APP_URL.startsWith('https://')
-    ? env.TELEGRAM_MINI_APP_URL
-    : 'https://phantom.com'
-  const ref = env.TELEGRAM_MINI_APP_URL.startsWith('https://')
-    ? env.TELEGRAM_MINI_APP_URL
-    : 'https://phantom.com'
-
-  return `https://phantom.app/ul/browse/${encodeURIComponent(target)}?ref=${encodeURIComponent(ref)}`
+  return env.TELEGRAM_MINI_APP_URL.startsWith('https://') ? env.TELEGRAM_MINI_APP_URL : 'https://phantom.app/'
 }
